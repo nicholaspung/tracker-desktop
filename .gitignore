@@ -1,0 +1,9 @@
+build/bin
+node_modules
+frontend/dist
+
+pb_data
+pb_migrations
+wailsjs
+
+pocketbase.exe
