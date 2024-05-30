@@ -23,17 +23,16 @@ import useData from '../hooks/useData';
 import { COLLECTION_NAMES } from '../lib/collections';
 import {
   getDefaultPreferences,
-  getVisibleContentOptions,
+  getVisibleContentPreference,
   transformVisibleContentOptionsForPreferences,
 } from '../utils/preferences';
-import { STORE_NAMES } from '../lib/store';
 import useFlashbar from '../hooks/useFlashbar';
 
 export default function ApplicationsPage() {
   const { pb, applications, setDataInStore, replaceItemInStore } = useMyStore(
     (state) => ({
       pb: state.pb,
-      applications: state.applications,
+      applications: state[COLLECTION_NAMES.APPLICATIONS],
       setDataInStore: state.setDataInStore,
       replaceItemInStore: state.replaceItemInStore,
     }),
@@ -48,6 +47,18 @@ export default function ApplicationsPage() {
     { id: 'description' },
     { id: 'collectionNames' },
   ];
+  /**
+   * @type {{
+   *   fetched: boolean,
+   *   applications: {
+   *     collectionNames: string[],
+   *     description: string,
+   *     id: string,
+   *     name: string,
+   *     selected: boolean
+   *   }[]
+   * }}
+   */
   const [initialApplications, setInitialApplications] = useState({
     fetched: false,
     applications: [],
@@ -56,15 +67,21 @@ export default function ApplicationsPage() {
     useFlashbar();
 
   /**
-   * [
-   *  {
-   *  collectionNames: [string],
+   *
+   * @param {{
+   *  collectionNames: string,
+   *  description: string,
+   *  name: string,
+   *  id: string,
+   *  selected: boolean
+   * }} el
+   * @returns {{
+   *  collectionNames: string[],
    *  description: string,
    *  id: string,
    *  name: string,
    *  selected: boolean
-   *  }
-   * ]
+   * }[]}
    */
   const applicationsTransformer = (el) => ({
     name: el.name,
@@ -73,6 +90,7 @@ export default function ApplicationsPage() {
     id: el.id,
     selected: el.selected,
   });
+
   const getApplications = async () => {
     const data = await fetchPbRecordList(pb, {
       collectionName: COLLECTION_NAMES.APPLICATIONS,
@@ -86,7 +104,7 @@ export default function ApplicationsPage() {
     );
 
     if (JSON.stringify(transformedData) !== JSON.stringify(applications)) {
-      setDataInStore(STORE_NAMES.APPLICATIONS, transformedData);
+      setDataInStore(COLLECTION_NAMES.APPLICATIONS, transformedData);
       setInitialApplications((prev) => {
         if (!prev.fetched) {
           return {
@@ -98,12 +116,7 @@ export default function ApplicationsPage() {
       });
     }
   };
-  const {
-    isLoading,
-    hasError,
-    error,
-    refetch: gRefetch,
-  } = useData(getApplications);
+  const { isLoading, hasError, error, refetch } = useData(getApplications);
 
   // Have not actually tested what an error looks like when fetching data
   useEffect(() => {
@@ -174,7 +187,7 @@ export default function ApplicationsPage() {
         },
       });
       replaceItemInStore(
-        STORE_NAMES.APPLICATIONS,
+        COLLECTION_NAMES.APPLICATIONS,
         applicationsTransformer(data),
       );
     });
@@ -185,13 +198,13 @@ export default function ApplicationsPage() {
   };
   const onReset = async () => {
     await setDataInStore(
-      STORE_NAMES.APPLICATIONS,
+      COLLECTION_NAMES.APPLICATIONS,
       initialApplications.applications,
     );
     await updateApplications(initialApplications.applications);
   };
   const onRefresh = async () => {
-    await gRefetch();
+    await refetch();
   };
 
   return (
@@ -261,17 +274,6 @@ export default function ApplicationsPage() {
             selectionType="multi"
             trackBy="id"
             visibleSections={preferences.visibleContent}
-            empty={
-              <Box
-                margin={{ vertical: 'xs' }}
-                textAlign="center"
-                color="inherit"
-              >
-                <SpaceBetween size="m">
-                  <b>No apps</b>
-                </SpaceBetween>
-              </Box>
-            }
             filter={
               <TextFilter
                 {...filterProps}
@@ -306,7 +308,7 @@ export default function ApplicationsPage() {
               <Preferences
                 preferences={preferences}
                 setPreferences={setPreferences}
-                visibleContentPreference={getVisibleContentOptions(
+                visibleContentPreference={getVisibleContentPreference(
                   VISIBLE_CONTENT_OPTIONS,
                 )}
                 useVisibleContentPreference

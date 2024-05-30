@@ -1,6 +1,12 @@
-export async function fetchPbRecordList(pb, { collectionName }, debug = false) {
+export async function fetchPbRecordList(
+  pb,
+  { collectionName, expandFields },
+  debug = false,
+) {
   try {
-    const resultList = await pb.collection(collectionName).getFullList();
+    const resultList = await pb.collection(collectionName).getFullList({
+      expand: expandFields ? expandFields.join(',') : null,
+    });
     if (debug) {
       console.log('fetch api', resultList);
     }

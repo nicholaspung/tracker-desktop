@@ -1,21 +1,20 @@
 import CollectionPreferences from '@cloudscape-design/components/collection-preferences';
 
-export const PAGE_SIZE_OPTIONS = [
-  { value: 10, label: '10 Apps' },
-  { value: 30, label: '30 Apps' },
-  { value: 50, label: '50 Apps' },
-];
+const getSanitizedPreferences = (pref, useVisibleContentPreference) => {
+  const preferencesCopy = { ...pref };
+  if (useVisibleContentPreference) {
+    delete preferencesCopy.contentDisplay;
+  } else {
+    delete preferencesCopy.visibleContent;
+  }
+  return preferencesCopy;
+};
 
-const CONTENT_DISPLAY_OPTIONS = [
-  { id: 'id', label: 'Distribution ID', alwaysVisible: true },
-  { id: 'state', label: 'State' },
-  { id: 'domainName', label: 'Domain name' },
-  { id: 'deliveryMethod', label: 'Delivery method' },
-  { id: 'sslCertificate', label: 'SSL certificate' },
-  { id: 'priceClass', label: 'Price class' },
-  { id: 'logging', label: 'Logging' },
-  { id: 'origin', label: 'Origin' },
-  { id: 'actions', label: 'Actions' },
+export const PAGE_SIZE_OPTIONS = [
+  { value: 10, label: '10 resources' },
+  { value: 30, label: '30 resources' },
+  { value: 50, label: '50 resources' },
+  { value: 100, label: '100 resources' },
 ];
 
 const STICKY_COLUMNS_OPTIONS = {
@@ -45,7 +44,7 @@ export default function Preferences({
   setPreferences,
   disabled = false,
   pageSizeOptions = PAGE_SIZE_OPTIONS,
-  contentDisplayOptions = CONTENT_DISPLAY_OPTIONS,
+  contentDisplayPreference,
   stickyColumnsOptions = STICKY_COLUMNS_OPTIONS,
   disableStickyColumns = true,
   visibleContentPreference,
@@ -57,16 +56,17 @@ export default function Preferences({
   return (
     <CollectionPreferences
       disabled={disabled}
-      preferences={preferences}
+      preferences={getSanitizedPreferences(
+        preferences,
+        useVisibleContentPreference,
+      )}
       onConfirm={({ detail }) => setPreferences(detail)}
       pageSizePreference={{ options: pageSizeOptions }}
       wrapLinesPreference={useWrapLinesPreference ? {} : undefined}
       stripedRowsPreference={useStripedRowsPreference ? {} : undefined}
       contentDensityPreference={useContentDensityPreference ? {} : undefined}
       contentDisplayPreference={
-        !useVisibleContentPreference
-          ? { options: contentDisplayOptions }
-          : undefined
+        !useVisibleContentPreference ? contentDisplayPreference : undefined
       }
       stickyColumnsPreference={
         !disableStickyColumns ? stickyColumnsOptions : undefined

@@ -1,27 +1,32 @@
 import { create } from 'zustand';
 import Pocketbase from 'pocketbase';
-import { STORE_NAMES } from '../lib/store';
+import { COLLECTION_NAMES } from '../lib/collections';
 
 const pb = new Pocketbase('http://127.0.0.1:8090');
 
 const useMyStore = create((set) => ({
   pb,
   /**
-   * [
-   *  {
-   *    collectionId: string,
-   *    collectionName: string,
-   *    collectionNames: []string,
-   *    created: date string,
-   *    description: string,
-   *    id: string,
-   *    name: string,
-   *    selected: boolean,
-   *    updated: date string
-   *  }
-   * ]
+   * @type {{
+   *  collectionNames: string[],
+   *  description: string,
+   *  id: string,
+   *  name: string,
+   *  selected: boolean
+   * }[]
    */
-  [STORE_NAMES.APPLICATIONS]: [],
+  [COLLECTION_NAMES.APPLICATIONS]: [],
+  /**
+   * @type {{
+   *  date: string,
+   *  amount: number,
+   *  description: string,
+   *  category: {},
+   *  tags: {}
+   *  needs_review: boolean
+   * }}
+   */
+  [COLLECTION_NAMES.FINANCES_LOG]: [],
   setDataInStore: (store, data) =>
     set((state) => {
       if (!state[store]) {

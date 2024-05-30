@@ -1,14 +1,24 @@
+import { getColumnDisplay } from './table';
+
 /**
  *
- * @param {[string]} visibleContent
- * @returns {
+ * @param {string[]} visibleContent
+ * @returns {{
  *  pageSize: number,
- *  visibleContent: [string]
- * }
+ *  visibleContent: string[]
+ *  contentDisplay: {
+ *    id: string,
+ *    visible: boolean
+ *  }[]
+ * }}
  */
 export const getDefaultPreferences = (visibleContent) => ({
   pageSize: 10,
   visibleContent,
+  contentDisplay: getColumnDisplay(visibleContent),
+  wrapLines: true,
+  stripedRows: true,
+  contentDensity: 'comfortable',
 });
 
 export const transformVisibleContentOptionsForPreferences = (
@@ -16,27 +26,22 @@ export const transformVisibleContentOptionsForPreferences = (
 ) => visibleContentOptions.map((el) => el.id);
 
 /**
- * @param {
- *  [
- *      {
- *          id: string,
- *          label: string (optional),
- *          editable: boolean (optional)
- *      }
- *  ]
- * } visibleContent
- * @returns  {
+ * @param {{
+ *  id: string,
+ *  label: string,
+ *  editable?: boolean,
+ *  alwaysVisible?: boolean
+ * }[]} visibleContentOptions
+ * @returns  {{
  *  title: string,
- *  options: [
- *      {
- *          id: string,
- *          label: string,
- *          editable: boolean
- *      }
- *  ]
- * }
+ *  options: {
+ *    id: string,
+ *    label: string,
+ *    editable: boolean
+ *  }[]
+ * }}
  */
-export const getVisibleContentOptions = (visibleContentOptions) => ({
+export const getVisibleContentPreference = (visibleContentOptions) => ({
   title: 'Select visible content',
   options: [
     {
@@ -49,8 +54,23 @@ export const getVisibleContentOptions = (visibleContentOptions) => ({
         if (Object.keys(el).find((ele) => ele === 'editable')) {
           option.editable = el.editable;
         }
+        if (Object.keys(el).find((ele) => ele === 'alwaysVisible')) {
+          option.alwaysVisible = el.alwaysVisible;
+        }
         return option;
       }),
     },
   ],
 });
+
+/**
+ *
+ * @param {{id: string, label: string, alwaysVisible: boolean}} visibleContentOptions
+ * @returns {{
+ *  id: string,
+ *  label: string,
+ *  alwaysVisible: boolean
+ * }[]}
+ */
+export const getContentDisplayPreference = (visibleContentOptions) =>
+  getVisibleContentPreference(visibleContentOptions).options[0];
