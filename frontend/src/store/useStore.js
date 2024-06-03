@@ -27,6 +27,18 @@ const useMyStore = create((set) => ({
    * }}
    */
   [COLLECTION_NAMES.FINANCES_LOG]: [],
+  /**
+   * @type {{
+   *  category: string
+   * }}
+   */
+  [COLLECTION_NAMES.FINANCES_CATEGORY]: [],
+  /**
+   * @type {{
+   *  tag: string
+   * }}
+   */
+  [COLLECTION_NAMES.FINANCES_TAG]: [],
   setDataInStore: (store, data) =>
     set((state) => {
       if (!state[store]) {

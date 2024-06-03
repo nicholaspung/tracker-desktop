@@ -38,7 +38,7 @@ export const getColumnDefinitions = (columns) =>
     cell: (item) => {
       switch (el.type) {
         case TABLE_DISPLAY_TYPES.DATE:
-          return item[el.id];
+          return item[el.id].split(' ')[0];
         case TABLE_DISPLAY_TYPES.DOLLAR:
           return item[el.id].toLocaleString('en-US', {
             style: 'currency',

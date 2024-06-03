@@ -8,6 +8,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RT_HOME } from '../lib/routes';
+import wailsLogo from '../assets/images/logo-universal.png';
 
 export default function TopNav() {
   const navigate = useNavigate();
@@ -45,7 +46,8 @@ export default function TopNav() {
         href: RT_HOME,
         title: 'Builder',
         logo: {
-          src: '/src/assets/images/logo-universal.png',
+          // src: '/src/assets/images/logo-universal.png',
+          src: wailsLogo,
           alt: 'Builder',
         },
         onFollow: (e) => {

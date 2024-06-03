@@ -1,128 +1,118 @@
 import {
   Button,
+  Container,
+  DatePicker,
+  FormField,
   Header,
-  Pagination,
-  Table,
-  TextFilter,
+  Select,
+  SpaceBetween,
 } from '@cloudscape-design/components';
-import jmespath from 'jmespath';
 import { useState } from 'react';
-import { useCollection } from '@cloudscape-design/collection-hooks';
 import Layout from '../components/layout';
-import { getColumnDefinitions } from '../utils/table';
 import useMyStore from '../store/useStore';
-import { fetchPbRecordList } from '../utils/api';
 import { COLLECTION_NAMES } from '../lib/collections';
-import { pbRecordToUseCollectionData } from '../utils/data';
-import useData from '../hooks/useData';
-import EmptyState from '../components/empty-state';
 import {
-  getContentDisplayPreference,
-  getDefaultPreferences,
-} from '../utils/preferences';
-import Preferences from '../components/preferences';
-import { getTextFilterCounterText } from '../utils/text-filter';
-import { TABLE_DISPLAY_TYPES } from '../lib/display';
+  filterDataAccordingToPbDate,
+  filterDataAccoringToField,
+  getListData,
+} from '../utils/data';
+import useData from '../hooks/useData';
+import TableList from '../components/table-list';
+import {
+  CONFIG_FINANCES_CATEGORY,
+  CONFIG_FINANCES_LOG,
+  CONFIG_FINANCES_TAG,
+} from '../lib/config';
+import { ALL_OPTION, toOptions } from '../utils/misc';
+import { dateToDatePickerMonth } from '../utils/date';
 
 export default function WealthPage() {
-  const { pb, financesLog, setDataInStore, replaceItemInStore } = useMyStore(
-    (state) => ({
+  const { pb, financesLog, setDataInStore, financesCategory, financesTag } =
+    useMyStore((state) => ({
       pb: state.pb,
       financesLog: state[COLLECTION_NAMES.FINANCES_LOG],
       setDataInStore: state.setDataInStore,
-      replaceItemInStore: state.replaceItemInStore,
-    }),
-  );
-  const COLUMNS = [
-    { id: 'date', type: TABLE_DISPLAY_TYPES.DATE },
-    { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR },
-    { id: 'description', type: TABLE_DISPLAY_TYPES.TEXT },
-    { id: 'category', type: TABLE_DISPLAY_TYPES.BADGE },
-    { id: 'tags', type: TABLE_DISPLAY_TYPES.BADGE },
-    { id: 'needs_review', type: TABLE_DISPLAY_TYPES.TEXT },
-  ];
+      financesCategory: state[COLLECTION_NAMES.FINANCES_CATEGORY],
+      financesTag: state[COLLECTION_NAMES.FINANCES_TAG],
+    }));
 
-  /**
-   *
-   * @param {{
-   *  amount: number,
-   *  expand: {
-   *    category: {
-   *      category: string
-   *    },
-   *    tags: {
-   *      tag: string
-   *    }[]
-   *  },
-   *  date: string,
-   *  description: string,
-   *  needs_review: boolean
-   * }} el
-   * @returns {{
-   *  date: string,
-   *  amount: number,
-   *  description: string,
-   *  category: string,
-   *  tags: string[],
-   *  needs_review: boolean
-   * }[]}
-   */
-  const financesLogTransformer = (el) => ({
-    date: el.date,
-    amount: el.amount,
-    description: el.description,
-    category: jmespath.search(el, 'expand.category.category'),
-    tags: jmespath.search(el, 'expand.tags[].tag'),
-    needs_review: el.needs_review,
-  });
   const getFinancesLog = async () => {
-    const data = await fetchPbRecordList(pb, {
-      collectionName: COLLECTION_NAMES.FINANCES_LOG,
-      expandFields: ['category', 'tags'],
-    });
-    if (!data) return;
-    if (data.name === 'ClientResponseError 0') return;
-
-    const transformedData = pbRecordToUseCollectionData(
-      data,
-      financesLogTransformer,
+    getListData(
+      pb,
+      CONFIG_FINANCES_LOG.collection,
+      CONFIG_FINANCES_LOG.columns,
+      {
+        prevData: financesLog,
+        setData: setDataInStore,
+      },
     );
-
-    if (JSON.stringify(transformedData) !== JSON.stringify(financesLog)) {
-      setDataInStore(COLLECTION_NAMES.FINANCES_LOG, transformedData);
-    }
   };
-  const { isLoading, hasError, error, refetch } = useData(getFinancesLog);
+  const { isLoading: flIsLoading, refetch: flRefetch } =
+    useData(getFinancesLog);
 
-  const [preferences, setPreferences] = useState(
-    getDefaultPreferences(COLUMNS),
+  const getFinancesCategory = async () => {
+    getListData(
+      pb,
+      CONFIG_FINANCES_CATEGORY.collection,
+      CONFIG_FINANCES_CATEGORY.columns,
+      {
+        prevData: financesCategory,
+        setData: setDataInStore,
+      },
+    );
+  };
+  const { refetch: fcRefetch } = useData(getFinancesCategory);
+
+  const getFinancesTag = async () => {
+    getListData(
+      pb,
+      CONFIG_FINANCES_TAG.collection,
+      CONFIG_FINANCES_TAG.columns,
+      {
+        prevData: financesTag,
+        setData: setDataInStore,
+      },
+    );
+  };
+  const { refetch: ftRefetch } = useData(getFinancesTag);
+
+  const [timeFrame, setTimeFrame] = useState(dateToDatePickerMonth());
+  const [category, setCategory] = useState(ALL_OPTION);
+  const [tag, setTag] = useState(ALL_OPTION);
+
+  const initialFilterOptions = {
+    timeFrame,
+    category,
+    tag,
+  };
+  const [filterOptions, setFilterOptions] = useState(initialFilterOptions);
+
+  const dateFiltered = filterDataAccordingToPbDate(
+    financesLog,
+    new Date(filterOptions.timeFrame),
   );
+  const categoryFiltered = filterDataAccoringToField(
+    dateFiltered,
+    'category',
+    filterOptions.category,
+  );
+  const tagFiltered = filterDataAccoringToField(
+    categoryFiltered,
+    'tags',
+    filterOptions.tag,
+  );
+  console.log(tagFiltered);
 
-  const {
-    items,
-    actions,
-    filteredItemsCount,
-    collectionProps,
-    filterProps,
-    paginationProps,
-  } = useCollection(financesLog, {
-    filtering: {
-      empty: <EmptyState title="No finance logs" />,
-      noMatch: (
-        <EmptyState
-          title="No matches"
-          action={
-            <Button onClick={() => actions.setFiltering('')}>
-              Clear filter
-            </Button>
-          }
-        />
-      ),
-    },
-    pagination: { pageSize: preferences.pageSize },
-    sorting: {},
-    selection: {},
-  });
+  const onResetFilter = () => {
+    setFilterOptions(initialFilterOptions);
+  };
+  const onSaveFilter = () => {
+    setFilterOptions({ timeFrame, category, tag });
+  };
+  const isSameFilter = () =>
+    filterOptions.timeFrame === timeFrame &&
+    filterOptions.category === category &&
+    filterOptions.tag === tag;
 
   return (
     <Layout
@@ -135,37 +125,75 @@ export default function WealthPage() {
         </Header>
       }
     >
-      <Table
-        {...collectionProps}
-        columnDefinitions={getColumnDefinitions(COLUMNS)}
-        enableKeyboardNavigation
-        items={items}
-        columnDisplay={preferences.contentDisplay}
-        wrapLines={preferences.wrapLines}
-        stripedRows={preferences.stripedRows}
-        contentDensity={preferences.contentDensity}
-        loadingText="Loading resources"
-        loading={isLoading}
-        trackBy={(item) => `${item.date}${item.amount}${item.category}`}
-        filter={
-          <TextFilter
-            {...filterProps}
-            countText={getTextFilterCounterText(Number(filteredItemsCount))}
-            filteringAriaLabel="Filter apps"
-          />
-        }
-        pagination={<Pagination {...paginationProps} />}
-        preferences={
-          <Preferences
-            preferences={preferences}
-            setPreferences={setPreferences}
-            contentDisplayPreference={getContentDisplayPreference(COLUMNS)}
-            useWrapLinesPreference
-            useStripedRowsPreference
-            useContentDensityPreference
-          />
-        }
-      />
+      <SpaceBetween size="xs" direction="vertical">
+        <TableList
+          data={financesLog}
+          columns={CONFIG_FINANCES_LOG.columns}
+          label="Finance Logs"
+          isLoading={flIsLoading}
+          refetch={flRefetch}
+        />
+        <Container
+          header={<Header>Summary of Finance Logs according to filters</Header>}
+        >
+          <SpaceBetween size="xs" direction="vertical">
+            <SpaceBetween size="xs" direction="horizontal">
+              <FormField label="Select month">
+                <DatePicker
+                  granularity="month"
+                  placeholder="YYYY/MM"
+                  value={timeFrame}
+                  onChange={({ detail }) => setTimeFrame(detail.value)}
+                  isDateEnabled={(date) => date <= new Date()}
+                  openCalendarAriaLabel={(selectedDate) =>
+                    `Choose time period${
+                      selectedDate ? `, selected period is ${selectedDate}` : ''
+                    }`
+                  }
+                />
+              </FormField>
+              <FormField label="Select category">
+                <Select
+                  selectedOption={category}
+                  options={[
+                    ALL_OPTION,
+                    ...toOptions(financesCategory, 'category'),
+                  ]}
+                  onLoadItems={fcRefetch}
+                  onChange={({ detail }) => setCategory(detail.selectedOption)}
+                />
+              </FormField>
+              <FormField label="Select tag">
+                <Select
+                  selectedOption={tag}
+                  options={[ALL_OPTION, ...toOptions(financesTag, 'tag')]}
+                  onLoadItems={ftRefetch}
+                  onChange={({ detail }) => setTag(detail.selectedOption)}
+                />
+              </FormField>
+            </SpaceBetween>
+            <SpaceBetween size="xs" direction="horizontal">
+              <Button onClick={onResetFilter} disabled={isSameFilter()}>
+                Reset
+              </Button>
+              <Button
+                onClick={onSaveFilter}
+                variant="primary"
+                disabled={isSameFilter()}
+              >
+                Save filters
+              </Button>
+            </SpaceBetween>
+            <TableList
+              data={tagFiltered}
+              columns={CONFIG_FINANCES_LOG.columns}
+              label="Finance Logs"
+              hideHeader
+              variant="embedded"
+            />
+          </SpaceBetween>
+        </Container>
+      </SpaceBetween>
     </Layout>
   );
 }
