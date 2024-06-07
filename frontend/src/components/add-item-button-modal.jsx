@@ -1,11 +1,6 @@
-import {
-  Box,
-  Button,
-  Header,
-  SpaceBetween,
-} from '@cloudscape-design/components';
+import { Button } from '@cloudscape-design/components';
 import useModal from '../hooks/useModal';
-import Forms from './forms';
+import AddItemModal from './add-item-modal';
 
 export default function AddItemButtonModal({ config, label }) {
   const { ModalComponent, setVisible } = useModal();
@@ -13,21 +8,12 @@ export default function AddItemButtonModal({ config, label }) {
   return (
     <>
       <Button onClick={() => setVisible(true)}>{label}</Button>
-      <ModalComponent
-        header={<Header>{label}</Header>}
-        footer={
-          <Box float="right">
-            <SpaceBetween size="xs" direction="horizontal">
-              <Button onClick={() => setVisible(false)}>Cancel</Button>
-              <Button variant="primary">Save</Button>
-            </SpaceBetween>
-          </Box>
-        }
-      >
-        <SpaceBetween size="xs" direction="vertical">
-          <Forms columns={config.columns} />
-        </SpaceBetween>
-      </ModalComponent>
+      <AddItemModal
+        ModalComponent={ModalComponent}
+        setVisible={setVisible}
+        label={label}
+        config={config}
+      />
     </>
   );
 }

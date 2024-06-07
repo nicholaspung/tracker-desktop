@@ -12,10 +12,10 @@ export const dateToDatePickerMonth = (dateObj = new Date()) => {
 };
 
 export const isCurrentMonth = (dateObj2, dateObj1 = new Date()) => {
-  if (dateObj2.getFullYear() !== dateObj1.getFullYear()) {
+  if (dateObj2.getUTCFullYear() !== dateObj1.getUTCFullYear()) {
     return false;
   }
-  if (dateObj2.getMonth() !== dateObj1.getMonth()) {
+  if (dateObj2.getUTCMonth() !== dateObj1.getUTCMonth()) {
     return false;
   }
 

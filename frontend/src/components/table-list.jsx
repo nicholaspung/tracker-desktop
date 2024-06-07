@@ -74,7 +74,7 @@ export default function TableList({
       loadingText="Loading resources"
       loading={isLoading}
       variant={variant}
-      trackBy={(item) => `${item.date}${item.amount}${item.category}`}
+      trackBy="id"
       header={
         !hideHeader ? (
           <Header
@@ -97,6 +97,7 @@ export default function TableList({
             {...filterProps}
             countText={getTextFilterCounterText(Number(filteredItemsCount))}
             filteringAriaLabel={`Filter ${convertToTitleCase(label)}`}
+            filteringPlaceholder="Search here"
           />
         ) : null
       }

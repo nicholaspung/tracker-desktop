@@ -1,44 +1,12 @@
 import { Toggle, TopNavigation } from '@cloudscape-design/components';
-import {
-  Density,
-  Mode,
-  applyDensity,
-  applyMode,
-} from '@cloudscape-design/global-styles';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RT_HOME } from '../lib/routes';
 import wailsLogo from '../assets/images/logo-universal.png';
+import useTheme from '../hooks/useTheme';
 
 export default function TopNav() {
   const navigate = useNavigate();
-  const modeOpts = {
-    [Mode.Light]: true,
-    [Mode.Dark]: false,
-  };
-  const densityOpts = {
-    [Density.Compact]: true,
-    [Density.Comfortable]: false,
-  };
-
-  const [mode, setMode] = useState(modeOpts[Mode.Light]);
-  const [density, setDensity] = useState(densityOpts[Density.Compact]);
-
-  useEffect(() => {
-    if (mode === modeOpts[Mode.Light]) {
-      applyMode(Mode.Light);
-    } else {
-      applyMode(Mode.Dark);
-    }
-  }, [mode]);
-
-  useEffect(() => {
-    if (density === densityOpts[Density.Compact]) {
-      applyDensity(Density.Compact);
-    } else {
-      applyDensity(Density.Comfortable);
-    }
-  }, [density]);
+  const { toggleDensity, toggleMode, mode, density } = useTheme();
 
   return (
     <TopNavigation
@@ -60,10 +28,7 @@ export default function TopNav() {
           type: 'button',
           ariaLabel: 'Visual mode',
           text: (
-            <Toggle
-              checked={mode}
-              onChange={() => setMode((prevState) => !prevState)}
-            >
+            <Toggle checked={mode} onChange={() => toggleMode()}>
               {mode ? 'Light mode' : 'Dark mode'}
             </Toggle>
           ),
@@ -72,10 +37,7 @@ export default function TopNav() {
           type: 'button',
           ariaLabel: 'Spacing mode',
           text: (
-            <Toggle
-              checked={density}
-              onChange={() => setDensity((prevState) => !prevState)}
-            >
+            <Toggle checked={density} onChange={() => toggleDensity()}>
               {density ? 'Comfort mode' : 'Compact mode'}
             </Toggle>
           ),

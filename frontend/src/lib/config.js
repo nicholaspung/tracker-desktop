@@ -13,6 +13,7 @@ import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from './display';
 
 export const CONFIG_FINANCES_LOG = {
   collection: COLLECTION_NAMES.FINANCES_LOG,
+  sort: '-date',
   columns: [
     { id: 'date', type: TABLE_DISPLAY_TYPES.DATE },
     { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR },
@@ -40,11 +41,13 @@ export const CONFIG_FINANCES_LOG = {
 
 export const CONFIG_FINANCES_CATEGORY = {
   collection: COLLECTION_NAMES.FINANCES_CATEGORY,
+  sort: 'category',
   columns: [{ id: 'category', type: TABLE_DISPLAY_TYPES.TEXT }],
 };
 
 export const CONFIG_FINANCES_TAG = {
   collection: COLLECTION_NAMES.FINANCES_TAG,
+  sort: 'tag',
   columns: [{ id: 'tag', type: TABLE_DISPLAY_TYPES.TEXT }],
 };
 

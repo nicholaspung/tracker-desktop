@@ -5,7 +5,7 @@ import { convertToTitleCase } from '../utils/display';
 import SelectWithData from './forms/selectWithData';
 import { dateToDatePicker } from '../utils/date';
 
-export default function Forms({ columns, defaultData }) {
+export default function Forms({ columns, defaultData, setDataUpstream }) {
   const initialData =
     defaultData ||
     columns.reduce((acc, curr) => {
@@ -32,7 +32,13 @@ export default function Forms({ columns, defaultData }) {
   const [data, setData] = useState(initialData);
 
   const onChange = (el, detail, detailField) => {
-    setData((prev) => ({ ...prev, [el.id]: detail[detailField] }));
+    let dataForUpstream;
+    setData((prev) => {
+      const result = { ...prev, [el.id]: detail[detailField] };
+      dataForUpstream = result;
+      return result;
+    });
+    setDataUpstream(dataForUpstream);
   };
 
   return columns.map((el) => {
