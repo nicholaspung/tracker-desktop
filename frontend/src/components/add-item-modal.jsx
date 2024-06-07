@@ -35,6 +35,7 @@ export default function AddItemModal({
       newData: data,
       addItemToStore: storeValues.addItemToStore,
     });
+    setLoading(false);
     setVisible(false);
   };
 

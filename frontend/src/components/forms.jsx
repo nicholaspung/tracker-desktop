@@ -31,14 +31,14 @@ export default function Forms({ columns, defaultData, setDataUpstream }) {
     }, {});
   const [data, setData] = useState(initialData);
 
-  const onChange = (el, detail, detailField) => {
+  const onChange = async (el, detail, detailField) => {
     let dataForUpstream;
-    setData((prev) => {
+    await setData((prev) => {
       const result = { ...prev, [el.id]: detail[detailField] };
       dataForUpstream = result;
       return result;
     });
-    setDataUpstream(dataForUpstream);
+    await setDataUpstream(dataForUpstream);
   };
 
   return columns.map((el) => {

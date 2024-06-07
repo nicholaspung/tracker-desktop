@@ -81,7 +81,7 @@ const useMyStore = create((set) => ({
         throw new Error('replaceItemInStore: data store is not an array');
       }
 
-      const newData = [...data, item];
+      const newData = [item, ...data];
       return { [store]: newData };
     }),
   toggleDataStore: (store) =>

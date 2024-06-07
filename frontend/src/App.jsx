@@ -22,14 +22,17 @@ export default function App() {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      event.preventDefault();
       if (event.ctrlKey && event.key === '[') {
+        event.preventDefault();
         setNavState((prev) => !prev);
       } else if (event.ctrlKey && event.key === ']') {
+        event.preventDefault();
         setToolState((prev) => !prev);
       } else if (event.ctrlKey && event.key === '=') {
+        event.preventDefault();
         toggleDensity();
       } else if (event.ctrlKey && event.key === '-') {
+        event.preventDefault();
         toggleMode();
       }
     };
