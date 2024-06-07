@@ -1,6 +1,6 @@
 import { Badge, SpaceBetween } from '@cloudscape-design/components';
 import { TABLE_DISPLAY_TYPES } from '../lib/display';
-import { convertToTitleCase } from './display';
+import { convertToDollar, convertToTitleCase } from './display';
 
 /**
  *
@@ -40,10 +40,7 @@ export const getColumnDefinitions = (columns) =>
         case TABLE_DISPLAY_TYPES.DATE:
           return item[el.id].split(' ')[0];
         case TABLE_DISPLAY_TYPES.DOLLAR:
-          return item[el.id].toLocaleString('en-US', {
-            style: 'currency',
-            currency: 'USD',
-          });
+          return convertToDollar(item[el.id]);
         case TABLE_DISPLAY_TYPES.BADGE:
           if (Array.isArray(item[el.id])) {
             return (

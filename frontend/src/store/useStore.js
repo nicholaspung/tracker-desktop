@@ -5,6 +5,7 @@ import { COLLECTION_NAMES } from '../lib/collections';
 const pb = new Pocketbase('http://127.0.0.1:8090');
 
 const useMyStore = create((set) => ({
+  HelpContent: () => {},
   pb,
   /**
    * @type {{

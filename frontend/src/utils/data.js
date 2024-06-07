@@ -59,7 +59,7 @@ export const getListData = async (
 export const filterDataAccordingToPbDate = (data, date = new Date()) =>
   data.filter((el) => isCurrentMonth(new Date(el.date), date));
 
-export const filterDataAccoringToField = (data, field, selection) => {
+export const filterDataAccordingToField = (data, field, selection) => {
   if (Array.isArray(selection)) {
     if (selection[0].value === ALL_OPTION.value) {
       return data;
@@ -87,3 +87,37 @@ export const filterDataAccoringToField = (data, field, selection) => {
     }
   });
 };
+
+export const sumDataAccordingToFields = (data, sumField, groupField) => {
+  const groupFieldObj = {};
+
+  data.forEach((el) => {
+    const groupValue = el[groupField];
+    const sumValue = el[sumField];
+
+    if (!groupFieldObj[groupValue]) {
+      groupFieldObj[groupValue] = {
+        [sumField]: sumValue,
+        [groupField]: groupValue,
+      };
+    } else {
+      groupFieldObj[groupValue][sumField] += sumValue;
+    }
+  });
+
+  return Object.keys(groupFieldObj).map((el) => groupFieldObj[el]);
+};
+export const pieChartDataAccordingToFields = (data, titleField, valueField) =>
+  data.map((el) => ({ title: el[titleField], value: el[valueField] }));
+
+export const barChartDataAccordingToFields = (
+  data,
+  titleField,
+  date,
+  valueField,
+) =>
+  data.map((el) => ({
+    title: el[titleField],
+    type: 'bar',
+    data: [{ x: date, y: el[valueField] }],
+  }));

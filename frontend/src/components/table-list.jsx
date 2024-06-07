@@ -27,6 +27,9 @@ export default function TableList({
   refetch,
   hideHeader,
   variant = 'container',
+  hidePagination,
+  hidePreferences,
+  hideFilter,
 }) {
   const [preferences, setPreferences] = useState(
     getDefaultPreferences(columns),
@@ -77,9 +80,11 @@ export default function TableList({
           <Header
             counter={`(${data.length})`}
             actions={
-              <Button onClick={refetch}>
-                {isLoading ? <Spinner /> : <Icon name="refresh" />}
-              </Button>
+              refetch ? (
+                <Button onClick={refetch}>
+                  {isLoading ? <Spinner /> : <Icon name="refresh" />}
+                </Button>
+              ) : null
             }
           >
             {label}
@@ -87,21 +92,25 @@ export default function TableList({
         ) : null
       }
       filter={
-        <TextFilter
-          {...filterProps}
-          countText={getTextFilterCounterText(Number(filteredItemsCount))}
-          filteringAriaLabel={`Filter ${convertToTitleCase(label)}`}
-        />
+        !hideFilter ? (
+          <TextFilter
+            {...filterProps}
+            countText={getTextFilterCounterText(Number(filteredItemsCount))}
+            filteringAriaLabel={`Filter ${convertToTitleCase(label)}`}
+          />
+        ) : null
       }
-      pagination={<Pagination {...paginationProps} />}
+      pagination={!hidePagination ? <Pagination {...paginationProps} /> : null}
       preferences={
-        <Preferences
-          preferences={preferences}
-          setPreferences={setPreferences}
-          contentDisplayPreference={getContentDisplayPreference(columns)}
-          useWrapLinesPreference
-          useStripedRowsPreference
-        />
+        !hidePreferences ? (
+          <Preferences
+            preferences={preferences}
+            setPreferences={setPreferences}
+            contentDisplayPreference={getContentDisplayPreference(columns)}
+            useWrapLinesPreference
+            useStripedRowsPreference
+          />
+        ) : null
       }
     />
   );
