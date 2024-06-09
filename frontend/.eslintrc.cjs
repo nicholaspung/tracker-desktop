@@ -31,5 +31,6 @@ module.exports = {
     'react/prop-types': 'off',
     'object-curly-newline': 'off',
     'operator-linebreak': 'off',
+    'function-paren-newline': 'off',
   },
 };
