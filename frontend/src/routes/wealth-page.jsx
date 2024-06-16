@@ -24,7 +24,7 @@ export default function WealthPage() {
     return (
       <HelpPanel header={<h2>Overview</h2>}>
         <SpaceBetween size="xs" direction="vertical" alignItems="center">
-          <h4>Log Actions</h4>
+          <h4>Finance Log Actions</h4>
           <AddItemButtonModal
             config={CONFIG_FINANCES_LOG}
             label="Add new log"
@@ -45,6 +45,10 @@ export default function WealthPage() {
 
   useEffect(() => {
     setDataInStore('HelpContent', HelpContent);
+
+    return () => {
+      setDataInStore('HelpContent', null);
+    };
   }, []);
 
   return (

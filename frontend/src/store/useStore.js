@@ -7,7 +7,7 @@ import { densityOpts, modeOpts } from '../lib/theme';
 const pb = new Pocketbase('http://127.0.0.1:8090');
 
 const useMyStore = create((set) => ({
-  HelpContent: () => {},
+  HelpContent: null,
   pb,
   mode: modeOpts[Mode.Light],
   density: densityOpts[Density.Compact],
@@ -78,7 +78,7 @@ const useMyStore = create((set) => ({
       const data = state[store];
 
       if (!Array.isArray(data)) {
-        throw new Error('replaceItemInStore: data store is not an array');
+        throw new Error('addItemToStore: data store is not an array');
       }
 
       const newData = [item, ...data];
@@ -90,6 +90,21 @@ const useMyStore = create((set) => ({
         throw new Error('toggleDataStore: store is not an existing store');
       }
       return { [store]: !state[store] };
+    }),
+  removeItemInStore: (store, id) =>
+    set((state) => {
+      if (!Object.keys(state).includes(store)) {
+        throw new Error('removeItemInStore: store is not an existing store');
+      }
+
+      const data = state[store];
+
+      if (!Array.isArray(data)) {
+        throw new Error('removeItemInStore: data store is not an array');
+      }
+
+      const newData = data.filter((el) => el.id !== id);
+      return { [store]: newData };
     }),
 }));
 

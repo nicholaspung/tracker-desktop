@@ -1,8 +1,9 @@
 import { Button } from '@cloudscape-design/components';
+import { memo } from 'react';
 import useModal from '../hooks/useModal';
 import AddItemModal from './add-item-modal';
 
-export default function AddItemButtonModal({ config, label }) {
+function AddItemButtonModal({ config, label }) {
   const { ModalComponent, setVisible } = useModal();
 
   return (
@@ -17,3 +18,5 @@ export default function AddItemButtonModal({ config, label }) {
     </>
   );
 }
+
+export default memo(AddItemButtonModal);

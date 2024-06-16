@@ -248,7 +248,7 @@ export default function FinanceLogsSummary() {
           <SpaceBetween size="xs" direction="vertical">
             <TableList
               data={categorySummed}
-              columns={CONFIG_CUSTOM_FINANCE_SUMMARY.columns}
+              config={CONFIG_CUSTOM_FINANCE_SUMMARY}
               label="Category sums"
               hidePreferences
               hideFilter
@@ -292,7 +292,7 @@ export default function FinanceLogsSummary() {
         <hr />
         <TableList
           data={tagFiltered}
-          columns={CONFIG_FINANCES_LOG.columns}
+          config={CONFIG_FINANCES_LOG}
           label="Finance Logs - filtered"
           variant="embedded"
         />

@@ -1,5 +1,10 @@
 import jmespath from 'jmespath';
-import { addPbRecord, fetchPbRecordList } from './api';
+import {
+  addPbRecord,
+  deletePbRecord,
+  fetchPbRecordList,
+  updatePbRecord,
+} from './api';
 import { SELECT_TYPES } from '../lib/display';
 
 const transfomer = (el, config) => {
@@ -67,22 +72,17 @@ export const getListData = async (
   return transformedData;
 };
 
-export const addData = async (
-  pb,
-  config,
-  { newData, addItemToStore, stores },
-) => {
-  // Replace relational data with correct id
-  const newDataCopy = { ...newData };
+const transformDataToPbRecordData = (config, data, stores) => {
+  const dataCopy = { ...data };
   config.columns.forEach((column) => {
     if (column.store) {
       if (column.selectType === SELECT_TYPES.SINGLE) {
         const record = stores[column.store].find(
-          (el) => el[column.storeField] === newDataCopy[column.id].value,
+          (el) => el[column.storeField] === dataCopy[column.id].value,
         );
-        newDataCopy[column.id] = record.id;
+        dataCopy[column.id] = record.id;
       } else {
-        newDataCopy[column.id] = newDataCopy[column.id].map((dataValue) => {
+        dataCopy[column.id] = dataCopy[column.id].map((dataValue) => {
           const record = stores[column.store].find(
             (el) => el[column.storeField] === dataValue.value,
           );
@@ -91,10 +91,20 @@ export const addData = async (
       }
     }
   });
+  return dataCopy;
+};
+
+export const addData = async (
+  pb,
+  config,
+  { newData, addItemToStore, stores },
+) => {
+  // Replace relational data with correct id
+  const newPbData = transformDataToPbRecordData(config, newData, stores);
 
   const data = await addPbRecord(pb, {
     collectionName: config.collection,
-    body: newDataCopy,
+    body: newPbData,
     expandFields: config.columns
       .filter((el) => el.expandFields)
       .map((ele) => ele.expandFields),
@@ -108,4 +118,50 @@ export const addData = async (
   }
   await addItemToStore(config.collection, transformedData);
   return transformedData;
+};
+
+export const updateData = async (
+  pb,
+  config,
+  { updatedData, replaceItemInStore, stores },
+) => {
+  if (!updatedData) return null;
+
+  const updatedPbData = transformDataToPbRecordData(
+    config,
+    updatedData,
+    stores,
+  );
+
+  const data = await updatePbRecord(pb, {
+    collectionName: config.collection,
+    id: updatedPbData.id,
+    body: updatedPbData,
+    expandFields: config.columns
+      .filter((el) => el.expandFields)
+      .map((ele) => ele.expandFields),
+  });
+
+  if (!data) return null;
+  if (data.name === 'ClientResponseError 0') return null;
+
+  const transformedData = pbRecordToUseCollectionData(data, transfomer, config);
+  if (!replaceItemInStore) {
+    return transformedData;
+  }
+  await replaceItemInStore(config.collection, transformedData);
+  return transformedData;
+};
+
+export const deleteData = async (pb, config, { id, removeItemInStore }) => {
+  if (!id) return null;
+
+  const data = await deletePbRecord(pb, {
+    collectionName: config.collection,
+    id,
+  });
+  if (data && data.name === 'ClientResponseError 0') return null;
+
+  await removeItemInStore(config.collection, id);
+  return data;
 };

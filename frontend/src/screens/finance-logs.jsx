@@ -10,6 +10,7 @@ import useMyStore from '../store/useStore';
 import { getListData } from '../utils/data';
 import useData from '../hooks/useData';
 import FinanceLogsSummary from './finance-logs-summary';
+import { SELECT_TYPES } from '../lib/display';
 
 export default function FinanceLogs() {
   const { pb, financesLog, setDataInStore, financesCategory, financesTag } =
@@ -58,11 +59,12 @@ export default function FinanceLogs() {
             content: (
               <TableList
                 data={financesLog}
-                columns={CONFIG_FINANCES_LOG.columns}
+                config={CONFIG_FINANCES_LOG}
                 label="All Finance Logs"
                 isLoading={flIsLoading}
                 refetch={flRefetch}
                 variant="embedded"
+                selectionType={SELECT_TYPES.SINGLE}
               />
             ),
           },
@@ -72,7 +74,7 @@ export default function FinanceLogs() {
             content: (
               <TableList
                 data={financesCategory}
-                columns={CONFIG_FINANCES_CATEGORY.columns}
+                config={CONFIG_FINANCES_CATEGORY}
                 label="All Finance Categories"
                 isLoading={fcLoading}
                 refetch={fcRefetch}
@@ -86,7 +88,7 @@ export default function FinanceLogs() {
             content: (
               <TableList
                 data={financesTag}
-                columns={CONFIG_FINANCES_TAG.columns}
+                config={CONFIG_FINANCES_TAG}
                 label="All Finance Tags"
                 isLoading={ftLoading}
                 refetch={ftRefetch}

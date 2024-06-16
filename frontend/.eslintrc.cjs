@@ -32,5 +32,7 @@ module.exports = {
     'object-curly-newline': 'off',
     'operator-linebreak': 'off',
     'function-paren-newline': 'off',
+    'no-confusing-arrow': 'off',
+    'no-case-declarations': 'off',
   },
 };

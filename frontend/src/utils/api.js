@@ -61,3 +61,22 @@ export async function addPbRecord(
     return err;
   }
 }
+
+export async function deletePbRecord(
+  pb,
+  { collectionName, id },
+  debug = false,
+) {
+  try {
+    const result = await pb.collection(collectionName).delete(id);
+    if (debug) {
+      console.log('delete api', result);
+    }
+    return result;
+  } catch (err) {
+    if (debug) {
+      console.error('delete api', err);
+    }
+    return err;
+  }
+}

@@ -4,31 +4,46 @@ import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../lib/display';
 import { convertToTitleCase } from '../utils/display';
 import SelectWithData from './forms/selectWithData';
 import { dateToDatePicker } from '../utils/date';
+import { toOptions } from '../utils/misc';
 
 export default function Forms({ columns, defaultData, setDataUpstream }) {
-  const initialData =
-    defaultData ||
-    columns.reduce((acc, curr) => {
+  const initialData = columns.reduce(
+    (acc, curr) => {
       let value;
+      const DEFAULT_VALUES = {
+        [TABLE_DISPLAY_TYPES.DATE]: dateToDatePicker(),
+        [TABLE_DISPLAY_TYPES.BADGE]:
+          curr.selectType === SELECT_TYPES.MULTIPLE ? [] : '',
+        [TABLE_DISPLAY_TYPES.DOLLAR]: '',
+        [TABLE_DISPLAY_TYPES.TEXT]: '',
+      };
+      const returnData = (column, data, displayType) =>
+        data && data[column.id] ? data[column.id] : DEFAULT_VALUES[displayType];
       switch (curr.type) {
         case TABLE_DISPLAY_TYPES.DATE:
-          value = dateToDatePicker();
+          value = returnData(curr, defaultData, TABLE_DISPLAY_TYPES.DATE);
           break;
         case TABLE_DISPLAY_TYPES.BADGE:
-          if (curr.selectType === SELECT_TYPES.MULTIPLE) {
-            value = [];
-          } else {
-            value = '';
+          const badgeValue = returnData(
+            curr,
+            defaultData,
+            TABLE_DISPLAY_TYPES.BADGE,
+          );
+          if ((Array.isArray(badgeValue) && badgeValue.length) || badgeValue) {
+            value = toOptions(badgeValue);
           }
           break;
         case TABLE_DISPLAY_TYPES.DOLLAR:
         case TABLE_DISPLAY_TYPES.TEXT:
         default:
-          value = '';
+          value = returnData(curr, defaultData, TABLE_DISPLAY_TYPES.TEXT);
       }
       acc[curr.id] = value;
       return acc;
-    }, {});
+    },
+    defaultData && defaultData.id ? { id: defaultData.id } : {},
+  );
+
   const [data, setData] = useState(initialData);
 
   const onChange = async (el, detail, detailField) => {

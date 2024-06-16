@@ -1,10 +1,8 @@
 import { SideNavigation } from '@cloudscape-design/components';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function SideNav() {
+export default function SideNav({ activeHref, setActiveHref }) {
   const navigate = useNavigate();
-  const [activeHref, setActiveHref] = useState('/');
 
   return (
     <SideNavigation

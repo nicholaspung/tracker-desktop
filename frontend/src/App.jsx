@@ -13,6 +13,7 @@ const LOCALE = 'en';
 export default function App() {
   const [navState, setNavState] = useState(false);
   const [toolState, setToolState] = useState(false);
+  const [activeHref, setActiveHref] = useState('/');
 
   const { toggleDensity, toggleMode } = useTheme();
 
@@ -45,13 +46,16 @@ export default function App() {
 
   return (
     <I18nProvider locale={LOCALE} messages={[messages]}>
-      <TopNav />
+      <TopNav setActiveHref={setActiveHref} />
       <AppLayout
         navigationOpen={navState}
-        navigation={<SideNav />}
+        navigation={
+          <SideNav activeHref={activeHref} setActiveHref={setActiveHref} />
+        }
         onNavigationChange={({ detail }) => setNavState(detail.open)}
         toolsOpen={toolState}
-        tools={<HelpContent />}
+        tools={HelpContent && <HelpContent />}
+        toolsHide={!HelpContent}
         onToolsChange={({ detail }) => setToolState(detail.open)}
         content={<Outlet />}
       />

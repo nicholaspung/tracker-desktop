@@ -4,7 +4,7 @@ import { RT_HOME } from '../lib/routes';
 import wailsLogo from '../assets/images/logo-universal.png';
 import useTheme from '../hooks/useTheme';
 
-export default function TopNav() {
+export default function TopNav({ setActiveHref }) {
   const navigate = useNavigate();
   const { toggleDensity, toggleMode, mode, density } = useTheme();
 
@@ -18,8 +18,9 @@ export default function TopNav() {
           src: wailsLogo,
           alt: 'Builder',
         },
-        onFollow: (e) => {
+        onFollow: async (e) => {
           e.preventDefault();
+          await setActiveHref('/');
           navigate(RT_HOME);
         },
       }}
