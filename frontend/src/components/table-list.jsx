@@ -23,13 +23,13 @@ import { SELECT_TYPES } from '../lib/display';
 import useMyStore from '../store/useStore';
 import { getStoreNamesFromConfig } from '../utils/store';
 import EditTableItem from './forms/edit-table-item';
+import { getListData } from '../utils/data';
+import useData from '../hooks/useData';
 
 export default function TableList({
   data,
   config,
   label,
-  isLoading,
-  refetch,
   hideHeader,
   variant = 'container',
   hidePagination,
@@ -41,14 +41,31 @@ export default function TableList({
     const storeNames = getStoreNamesFromConfig(config);
     const result = {
       pb: state.pb,
+      data: state[config.collection],
+      setDataInStore: state.setDataInStore,
       replaceItemInStore: state.replaceItemInStore,
       removeItemInStore: state.removeItemInStore,
     };
+    if (data) {
+      delete result.data;
+    }
     storeNames.forEach((store) => {
       result[store] = state[store];
     });
     return result;
   });
+
+  const tableData = data || storeValues.data;
+
+  const getData = async () => {
+    if (data) return;
+
+    getListData(storeValues.pb, config, {
+      prevData: storeValues.data,
+      setDataInStore: storeValues.setDataInStore,
+    });
+  };
+  const { isLoading, refetch } = useData(getData);
 
   const [preferences, setPreferences] = useState(
     getDefaultPreferences(config.columns),
@@ -61,7 +78,7 @@ export default function TableList({
     collectionProps,
     filterProps,
     paginationProps,
-  } = useCollection(data, {
+  } = useCollection(tableData, {
     filtering: {
       empty: <EmptyState title={`No ${label.toLowerCase()}`} />,
       noMatch: (
@@ -97,7 +114,7 @@ export default function TableList({
     trackBy: 'id',
     header: !hideHeader ? (
       <Header
-        counter={`(${data.length})`}
+        counter={`(${tableData.length})`}
         actions={
           refetch ? (
             <Button onClick={refetch}>

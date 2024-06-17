@@ -26,8 +26,8 @@ const useMyStore = create((set) => ({
    *  date: string,
    *  amount: number,
    *  description: string,
-   *  category: {},
-   *  tags: {}
+   *  category: object,
+   *  tags: object[]
    *  needs_review: boolean
    * }}
    */
@@ -44,6 +44,35 @@ const useMyStore = create((set) => ({
    * }}
    */
   [COLLECTION_NAMES.FINANCES_TAG]: [],
+  /**
+   * @type {{
+   *  date: string,
+   *  amount: number,
+   *  account_name: object,
+   *  account_type: object,
+   *  owner: object
+   * }}
+   */
+  [COLLECTION_NAMES.FINANCES_BALANCE]: [],
+  /**
+   * @type {{
+   *  name: string
+   * }}
+   */
+  [COLLECTION_NAMES.FINANCES_BALANCE_ACCOUNT_NAME]: [],
+  /**
+   * @type {{
+   *  name: string
+   * }}
+   */
+  [COLLECTION_NAMES.FINANCES_BALANCE_OWNER]: [],
+  /**
+   * @type {{
+   *  account_type: string,
+   *  category: object
+   * }}
+   */
+  [COLLECTION_NAMES.FINANCES_BALANCE_TYPE]: [],
   setDataInStore: (store, data) =>
     set((state) => {
       if (!Object.keys(state).includes(store)) {
