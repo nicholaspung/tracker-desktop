@@ -10,3 +10,13 @@ export const SUMMARY_FILTERS = {
   SELECTION_SINGLE: 'selection-single',
   SELECTION_MULTIPLE: 'selection-single',
 };
+
+export const SUMMARY_PIECES = {
+  SUMMARY_TABLE: 'summary-table',
+  FULL_TABLE: 'full-table',
+  SINGLE_BAR_CHART: 'single-bar-chart',
+};
+
+export const SUMMARY_ANALYSIS = {
+  SUM: 'sum',
+};

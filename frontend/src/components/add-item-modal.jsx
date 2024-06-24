@@ -9,7 +9,7 @@ import { useState } from 'react';
 import Forms from './forms';
 import { addData } from '../utils/data';
 import useMyStore from '../store/useStore';
-import { getStoreNamesFromConfig } from '../utils/store';
+import { getStoreNamesFromConfigColumns } from '../utils/store';
 
 export default function AddItemModal({
   ModalComponent,
@@ -18,7 +18,7 @@ export default function AddItemModal({
   config,
 }) {
   const storeValues = useMyStore((state) => {
-    const storeNames = getStoreNamesFromConfig(config);
+    const storeNames = getStoreNamesFromConfigColumns(config);
     const result = { pb: state.pb, addItemToStore: state.addItemToStore };
     storeNames.forEach((store) => {
       result[store] = state[store];

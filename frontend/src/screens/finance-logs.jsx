@@ -1,12 +1,13 @@
 import { SpaceBetween, Tabs } from '@cloudscape-design/components';
 import TableList from '../components/table-list';
 import {
+  CONFIG_CUSTOM_FINANCE_SUMMARY,
   CONFIG_FINANCES_CATEGORY,
   CONFIG_FINANCES_LOG,
   CONFIG_FINANCES_TAG,
 } from '../lib/config';
-import FinanceLogsSummary from './finance-logs-summary';
 import { SELECT_TYPES } from '../lib/display';
+import Summary from '../components/summary';
 
 export default function FinanceLogs() {
   return (
@@ -52,7 +53,7 @@ export default function FinanceLogs() {
           },
         ]}
       />
-      <FinanceLogsSummary />
+      <Summary config={CONFIG_CUSTOM_FINANCE_SUMMARY} />
     </SpaceBetween>
   );
 }

@@ -21,7 +21,7 @@ import { convertToTitleCase } from '../utils/display';
 import Preferences from './preferences';
 import { SELECT_TYPES } from '../lib/display';
 import useMyStore from '../store/useStore';
-import { getStoreNamesFromConfig } from '../utils/store';
+import { getStoreNamesFromConfigColumns } from '../utils/store';
 import EditTableItem from './forms/edit-table-item';
 import { getListData } from '../utils/data';
 import useData from '../hooks/useData';
@@ -38,7 +38,7 @@ export default function TableList({
   selectionType,
 }) {
   const storeValues = useMyStore((state) => {
-    const storeNames = getStoreNamesFromConfig(config);
+    const storeNames = getStoreNamesFromConfigColumns(config);
     const result = {
       pb: state.pb,
       data: state[config.collection],

@@ -27,11 +27,14 @@ export function pbRecordsToUseCollectionData(data, dataTransformer, config) {
     return [];
   }
 
-  if (!data.items) {
-    return data.map((el) => dataTransformer(el, config));
-  }
+  if (Array.isArray(data)) {
+    if (!data.items) {
+      return data.map((el) => dataTransformer(el, config));
+    }
 
-  return data.items.map((el) => dataTransformer(el, config));
+    return data.items.map((el) => dataTransformer(el, config));
+  }
+  return [];
 }
 
 export function pbRecordToUseCollectionData(data, dataTransformer, config) {
@@ -49,9 +52,11 @@ export const getListData = async (
 ) => {
   const data = await fetchPbRecordList(pb, {
     collectionName: config.collection,
-    expandFields: config.columns
-      .filter((el) => el.expandFields)
-      .map((ele) => ele.expandFields),
+    expandFields: Array.isArray(config.columns)
+      ? config.columns
+          .filter((el) => el.expandFields)
+          .map((ele) => ele.expandFields)
+      : undefined,
     sort: config.sort,
   });
   if (!data) return null;

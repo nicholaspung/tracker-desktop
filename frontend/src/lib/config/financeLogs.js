@@ -1,6 +1,12 @@
 import { COLLECTION_NAMES } from '../collections';
 import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../display';
-// import { SUMMARY_FILTERS, TIME_FILTERS } from '../summary';
+import { LAYOUT_PIECES } from '../layout';
+import {
+  SUMMARY_ANALYSIS,
+  SUMMARY_FILTERS,
+  SUMMARY_PIECES,
+  TIME_FILTERS,
+} from '../summary';
 
 export const CONFIG_FINANCES_LOG = {
   collection: COLLECTION_NAMES.FINANCES_LOG,
@@ -48,15 +54,57 @@ export const CONFIG_CUSTOM_FINANCE_SUMMARY = {
     { id: 'category', type: TABLE_DISPLAY_TYPES.TEXT },
     { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR },
   ],
-  // filters: [
-  //   { filter: SUMMARY_FILTERS.TIME_FILTER, exclude: [TIME_FILTERS.WEEK] },
-  //   {
-  //     filter: SUMMARY_FILTERS.SELECTION_SINGLE,
-  //     store: COLLECTION_NAMES.FINANCES_CATEGORY,
-  //   },
-  //   {
-  //     filter: SUMMARY_FILTERS.SELECTION_SINGLE,
-  //     store: COLLECTION_NAMES.FINANCES_TAG,
-  //   },
-  // ],
+  filters: [
+    {
+      filter: SUMMARY_FILTERS.TIME_FILTER,
+      exclude: [TIME_FILTERS.WEEK],
+    },
+    {
+      filter: SUMMARY_FILTERS.SELECTION_SINGLE,
+      store: COLLECTION_NAMES.FINANCES_CATEGORY,
+      label: 'Select category',
+      optionField: 'category',
+      id: 'category',
+    },
+    {
+      filter: SUMMARY_FILTERS.SELECTION_SINGLE,
+      store: COLLECTION_NAMES.FINANCES_TAG,
+      label: 'Select tag',
+      optionField: 'tag',
+      id: 'tags',
+    },
+  ],
+  components: [
+    {
+      layout: LAYOUT_PIECES.COLUMNS,
+      columns: 2,
+      variant: 'text-grid',
+      pieces: [
+        {
+          piece: SUMMARY_PIECES.SUMMARY_TABLE,
+          label: 'Category sums',
+          analysis: SUMMARY_ANALYSIS.SUM,
+          sumField: 'amount',
+          groupField: 'category',
+        },
+        {
+          piece: SUMMARY_PIECES.SINGLE_BAR_CHART,
+          xTitle: 'Month',
+          yTitle: 'Amount',
+          ariaLabel: 'Summary of category chart',
+          popoverTitleField: 'category',
+          popoverValueField: 'amount',
+          analysis: SUMMARY_ANALYSIS.SUM,
+          sumField: 'amount',
+          groupField: 'category',
+        },
+      ],
+    },
+    { layout: LAYOUT_PIECES.HORIZONTAL_LINE },
+    {
+      piece: SUMMARY_PIECES.FULL_TABLE,
+      config: CONFIG_FINANCES_LOG,
+      label: 'Finance Logs - filtered',
+    },
+  ],
 };

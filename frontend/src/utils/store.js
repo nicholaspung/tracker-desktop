@@ -1,4 +1,4 @@
-export const getStoreNamesFromConfig = (config) => {
+export const getStoreNamesFromConfigColumns = (config) => {
   /**
    * [collectionName, ...]
    */
@@ -10,5 +10,15 @@ export const getStoreNamesFromConfig = (config) => {
     }
   });
 
+  return storeNames;
+};
+
+export const getStoreNamesFromConfigFilters = (config) => {
+  const storeNames = [];
+  config.filters.forEach((filter) => {
+    if (filter.store) {
+      storeNames.push(filter.store);
+    }
+  });
   return storeNames;
 };

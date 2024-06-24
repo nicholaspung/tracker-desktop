@@ -34,5 +34,7 @@ module.exports = {
     'function-paren-newline': 'off',
     'no-confusing-arrow': 'off',
     'no-case-declarations': 'off',
+    'no-continue': 'off',
+    'react/no-array-index-key': 'off',
   },
 };

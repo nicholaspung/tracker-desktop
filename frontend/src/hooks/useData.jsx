@@ -9,8 +9,8 @@ export default function useData(apiFunc) {
   const useFunc = async () => {
     setHasError(false);
     setError({});
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       await apiFunc();
       setIsLoading(false);
     } catch (err) {
