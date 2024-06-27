@@ -36,5 +36,6 @@ module.exports = {
     'no-case-declarations': 'off',
     'no-continue': 'off',
     'react/no-array-index-key': 'off',
+    indent: 'off',
   },
 };

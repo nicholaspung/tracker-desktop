@@ -3,14 +3,31 @@ export async function fetchPbRecordList(
   { collectionName, expandFields, sort },
   debug = false,
 ) {
+  if (!collectionName) return [];
   try {
-    const resultList = await pb.collection(collectionName).getFullList({
-      expand: expandFields ? expandFields.join(',') : null,
-      sort,
+    const options = {
+      expand: expandFields ? expandFields.join(',') : undefined,
+      sort: sort || undefined,
+    };
+    Object.keys(options).forEach((key) => {
+      if (!options[key]) {
+        delete options[key];
+      }
     });
+    let resultList;
+    if (Object.keys(options).length) {
+      resultList = await pb.collection(collectionName).getFullList(options);
+    } else {
+      resultList = await pb.collection(collectionName).getFullList();
+    }
     if (debug) {
       console.log('fetch api', resultList);
     }
+
+    if (!resultList || resultList.name === 'ClientResponseError 0') {
+      throw new Error(`Failed to fetch data for ${collectionName}`);
+    }
+
     return resultList;
   } catch (err) {
     if (debug) {

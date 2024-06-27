@@ -7,7 +7,7 @@ import {
 } from './api';
 import { SELECT_TYPES } from '../lib/display';
 
-const transfomer = (el, config) => {
+export const transfomer = (el, config) => {
   const transform = { id: el.id };
   config.columns.forEach((ele) => {
     const { id } = ele;

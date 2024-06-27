@@ -23,13 +23,13 @@ import { SELECT_TYPES } from '../lib/display';
 import useMyStore from '../store/useStore';
 import { getStoreNamesFromConfigColumns } from '../utils/store';
 import EditTableItem from './forms/edit-table-item';
-import { getListData } from '../utils/data';
-import useData from '../hooks/useData';
 
 export default function TableList({
   data,
   config,
   label,
+  isLoading = false,
+  refetch,
   hideHeader,
   variant = 'container',
   hidePagination,
@@ -56,16 +56,6 @@ export default function TableList({
   });
 
   const tableData = data || storeValues.data;
-
-  const getData = async () => {
-    if (data) return;
-
-    getListData(storeValues.pb, config, {
-      prevData: storeValues.data,
-      setDataInStore: storeValues.setDataInStore,
-    });
-  };
-  const { isLoading, refetch } = useData(getData);
 
   const [preferences, setPreferences] = useState(
     getDefaultPreferences(config.columns),
