@@ -60,14 +60,14 @@ export const CONFIG_CUSTOM_FINANCE_SUMMARY = {
       exclude: [TIME_FILTERS.WEEK],
     },
     {
-      filter: SUMMARY_FILTERS.SELECTION_SINGLE,
+      filter: SUMMARY_FILTERS.SELECTION_MULTIPLE,
       store: COLLECTION_NAMES.FINANCES_CATEGORY,
       label: 'Select category',
       optionField: 'category',
       id: 'category',
     },
     {
-      filter: SUMMARY_FILTERS.SELECTION_SINGLE,
+      filter: SUMMARY_FILTERS.SELECTION_MULTIPLE,
       store: COLLECTION_NAMES.FINANCES_TAG,
       label: 'Select tag',
       optionField: 'tag',

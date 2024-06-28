@@ -8,15 +8,14 @@ import { useState } from 'react';
 import TableList from './table-list';
 import { ALL_OPTION, toOptions } from '../utils/misc';
 import { filterDataAccordingtoFilterOptions } from '../utils/analysis';
-import { getListData } from '../utils/data';
 import useMyStore from '../store/useStore';
-import useData from '../hooks/useData';
 import { SUMMARY_FILTERS, SUMMARY_PIECES, TIME_FILTERS } from '../lib/summary';
 import { getStoreNamesFromConfigFilters } from '../utils/store';
 import { TimeFilter } from './summary/time-filter';
 import { SelectFilter } from './summary/select-filter';
 import { LAYOUT_PIECES } from '../lib/layout';
 import { ColumnComponent } from './summary/column-component';
+import MultiSelectFilter from './summary/multiselect-filter';
 
 export default function Summary({ config }) {
   const storeNames = getStoreNamesFromConfigFilters(config);
@@ -32,16 +31,6 @@ export default function Summary({ config }) {
     return result;
   });
 
-  const getData = async () => {
-    storeNames.forEach(async (name) => {
-      await getListData(storeValues.pb, name, {
-        prevData: storeValues[name],
-        setDataInStore: storeValues.setDataInStore,
-      });
-    });
-  };
-  useData(getData);
-
   const INITIAL_FILTER_OPTIONS = config.filters.reduce((acc, curr) => {
     const { filter, id } = curr;
     if (filter === SUMMARY_FILTERS.TIME_FILTER) {
@@ -50,9 +39,19 @@ export default function Summary({ config }) {
     if (filter === SUMMARY_FILTERS.SELECTION_SINGLE) {
       return { ...acc, [id]: ALL_OPTION };
     }
+    if (filter === SUMMARY_FILTERS.SELECTION_MULTIPLE) {
+      return { ...acc, [id]: [ALL_OPTION] };
+    }
     return acc;
   }, {});
 
+  /**
+   * @type {{
+   *  timeFilter: { label: string, value: string },
+   *  timeFrame: { Date range: string, Month: string, Year: { label: number, value: number } },
+   *  x: { label: string, value: string } | { label: string, value: string }[]
+   * }}
+   */
   const [filterOptions, setFilterOptions] = useState(INITIAL_FILTER_OPTIONS);
   const [currentFilterOptions, setCurrentFilterOptions] = useState(
     INITIAL_FILTER_OPTIONS,
@@ -99,6 +98,19 @@ export default function Summary({ config }) {
             if (filter.filter === SUMMARY_FILTERS.SELECTION_SINGLE) {
               return (
                 <SelectFilter
+                  label={filter.label}
+                  data={storeValues[filter.store]}
+                  optionField={filter.optionField}
+                  id={filter.id}
+                  initialValue={filterOptions[filter.id]}
+                  setFilterOptions={setFilterOptions}
+                  key={`${i}${filter.filter}`}
+                />
+              );
+            }
+            if (filter.filter === SUMMARY_FILTERS.SELECTION_MULTIPLE) {
+              return (
+                <MultiSelectFilter
                   label={filter.label}
                   data={storeValues[filter.store]}
                   optionField={filter.optionField}

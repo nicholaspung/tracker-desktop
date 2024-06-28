@@ -79,9 +79,12 @@ export const filterDataAccordingtoFilterOptions = (
   filters,
   filterOptions,
 ) => {
+  if (!data.length) return data;
+
   const filterOptionsKeys = Object.keys(filterOptions).filter(
-    (el) => el !== 'timeFilter' || el !== 'timeFrame',
+    (el) => el !== 'timeFilter' && el !== 'timeFrame',
   );
+
   return data.filter((el) => {
     let override = false;
     if (!dateFilterFunction(el, filterOptions)) {
@@ -94,12 +97,22 @@ export const filterDataAccordingtoFilterOptions = (
         const { id, filter } = filterItem;
         const selection = filterOptions[filterOptionsKeys[i]];
         if (filter === SUMMARY_FILTERS.SELECTION_SINGLE) {
-          if (Array.isArray(selection)) {
-            if (selection[0].value === ALL_OPTION.value) {
+          if (selection.value === ALL_OPTION.value) {
+            continue;
+          }
+          try {
+            const parsedData = JSON.stringify(el[id]);
+            if (!parsedData.includes(selection.value)) {
+              override = true;
               break;
             }
-          } else if (selection.value === ALL_OPTION.value) {
-            break;
+          } catch (err) {
+            throw new Error('failed in parsing JSON data');
+          }
+        }
+        if (filter === SUMMARY_FILTERS.SELECTION_MULTIPLE) {
+          if (selection[0].value === ALL_OPTION.value) {
+            continue;
           }
           try {
             const parsedData = JSON.stringify(el[id]);
@@ -110,9 +123,6 @@ export const filterDataAccordingtoFilterOptions = (
                   break;
                 }
               }
-              break;
-            } else if (!parsedData.includes(selection.value)) {
-              override = true;
               break;
             }
           } catch (err) {

@@ -8,7 +8,7 @@ export const TIME_FILTERS = {
 export const SUMMARY_FILTERS = {
   TIME_FILTER: 'time-filter',
   SELECTION_SINGLE: 'selection-single',
-  SELECTION_MULTIPLE: 'selection-single',
+  SELECTION_MULTIPLE: 'selection-multiple',
 };
 
 export const SUMMARY_PIECES = {
