@@ -37,7 +37,7 @@ export function pbRecordsToUseCollectionData(data, dataTransformer, config) {
   return [];
 }
 
-export function pbRecordToUseCollectionData(data, dataTransformer, config) {
+function pbRecordToUseCollectionData(data, dataTransformer, config) {
   if (!data) {
     return {};
   }

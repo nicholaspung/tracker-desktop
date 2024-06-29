@@ -3,6 +3,7 @@ export const TABLE_DISPLAY_TYPES = {
   TEXT: 'text',
   DOLLAR: 'dollar',
   BADGE: 'badge',
+  CHECKBOX: 'checkbox',
 };
 
 export const SELECT_TYPES = {
