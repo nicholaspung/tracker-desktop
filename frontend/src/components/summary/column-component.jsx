@@ -26,6 +26,7 @@ export function ColumnComponent({
               analysisDisplayFields={piece.analysisDisplayFields}
               sumField={piece.sumField}
               groupField={piece.groupField}
+              latestFields={piece.latestFields}
               key={`${i}${piece.piece}`}
             />
           );
@@ -43,6 +44,7 @@ export function ColumnComponent({
               analysis={piece.analysis}
               sumField={piece.sumField}
               groupField={piece.groupField}
+              latestFields={piece.latestFields}
               key={`${i}${piece.piece}`}
             />
           );

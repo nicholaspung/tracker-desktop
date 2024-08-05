@@ -1,5 +1,6 @@
 import { COLLECTION_NAMES } from '../collections';
 import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../display';
+import { LAYOUT_PIECES } from '../layout';
 import {
   SUMMARY_ANALYSIS,
   SUMMARY_ANALYSIS_DISPLAY,
@@ -114,23 +115,41 @@ export const CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY = {
   ],
   components: [
     {
-      piece: SUMMARY_PIECES.SUMMARY_TABLE,
-      label: 'Account name sums',
-      analysis: [SUMMARY_ANALYSIS.SUM, SUMMARY_ANALYSIS.LATEST],
-      sumField: 'amount',
-      groupField: 'account_type',
-      latestFields: ['account_name', 'account_type', 'account_owner'],
-      analysisDisplay: SUMMARY_ANALYSIS_DISPLAY.POSITIVE_NEGATIVE_TOTAL,
-      analysisDisplayFields: [
+      layout: LAYOUT_PIECES.COLUMNS,
+      columns: 2,
+      variant: 'text-grid',
+      pieces: [
         {
-          type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.POSITIVE,
-          label: 'Assets: ',
+          piece: SUMMARY_PIECES.SUMMARY_TABLE,
+          label: 'Account type sums',
+          analysis: [SUMMARY_ANALYSIS.SUM, SUMMARY_ANALYSIS.LATEST],
+          sumField: 'amount',
+          groupField: 'account_type',
+          latestFields: ['account_name', 'account_type', 'account_owner'],
+          analysisDisplay: SUMMARY_ANALYSIS_DISPLAY.POSITIVE_NEGATIVE_TOTAL,
+          analysisDisplayFields: [
+            {
+              type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.POSITIVE,
+              label: 'Assets: ',
+            },
+            {
+              type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.NEGATIVE,
+              label: 'Liabilities: ',
+            },
+            { type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.TOTAL, label: 'Total: ' },
+          ],
         },
         {
-          type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.NEGATIVE,
-          label: 'Liabilities: ',
+          piece: SUMMARY_PIECES.SINGLE_BAR_CHART,
+          xTitle: 'Month',
+          yTitle: 'Amount',
+          ariaLabel: 'Summary of account type chart',
+          popoverTitleField: 'account_type',
+          popoverValueField: 'amount',
+          analysis: [SUMMARY_ANALYSIS.SUM, SUMMARY_ANALYSIS.LATEST],
+          sumField: 'amount',
+          groupField: 'account_type',
         },
-        { type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.TOTAL, label: 'Total: ' },
       ],
     },
     {
