@@ -18,7 +18,7 @@ export default function MultiSelectFilter({
 
   const onChange = (options) => {
     if (!options.length) {
-      setSelectedOptions([ALL_OPTION]);
+      setSelectedOptions(toOptions(data, optionField));
     } else if (options.find((el) => el.value === ALL_OPTION.value)) {
       setSelectedOptions((prev) => {
         if (prev.find((el) => el.value === ALL_OPTION.value)) {

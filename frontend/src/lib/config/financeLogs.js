@@ -3,12 +3,15 @@ import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../display';
 import { LAYOUT_PIECES } from '../layout';
 import {
   SUMMARY_ANALYSIS,
+  SUMMARY_ANALYSIS_DISPLAY,
+  SUMMARY_ANALYSIS_DISPLAY_FIELDS,
   SUMMARY_FILTERS,
   SUMMARY_PIECES,
   TIME_FILTERS,
 } from '../summary';
 
 export const CONFIG_FINANCES_LOG = {
+  label: 'finance log',
   collection: COLLECTION_NAMES.FINANCES_LOG,
   sort: '-date',
   columns: [
@@ -83,9 +86,21 @@ export const CONFIG_CUSTOM_FINANCE_SUMMARY = {
         {
           piece: SUMMARY_PIECES.SUMMARY_TABLE,
           label: 'Category sums',
-          analysis: SUMMARY_ANALYSIS.SUM,
+          analysis: [SUMMARY_ANALYSIS.SUM],
           sumField: 'amount',
           groupField: 'category',
+          analysisDisplay: SUMMARY_ANALYSIS_DISPLAY.POSITIVE_NEGATIVE_TOTAL,
+          analysisDisplayFields: [
+            {
+              type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.POSITIVE,
+              label: 'Income + Cash: ',
+            },
+            {
+              type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.NEGATIVE,
+              label: 'Spend: ',
+            },
+            { type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.TOTAL, label: 'Total: ' },
+          ],
         },
         {
           piece: SUMMARY_PIECES.SINGLE_BAR_CHART,
@@ -94,7 +109,7 @@ export const CONFIG_CUSTOM_FINANCE_SUMMARY = {
           ariaLabel: 'Summary of category chart',
           popoverTitleField: 'category',
           popoverValueField: 'amount',
-          analysis: SUMMARY_ANALYSIS.SUM,
+          analysis: [SUMMARY_ANALYSIS.SUM],
           sumField: 'amount',
           groupField: 'category',
         },

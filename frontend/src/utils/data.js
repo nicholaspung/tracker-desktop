@@ -85,9 +85,9 @@ const transformDataToPbRecordData = (config, data, stores) => {
         const record = stores[column.store].find(
           (el) => el[column.storeField] === dataCopy[column.id].value,
         );
-        dataCopy[column.id] = record.id;
+        dataCopy[column.expandFields] = record.id;
       } else {
-        dataCopy[column.id] = dataCopy[column.id].map((dataValue) => {
+        dataCopy[column.expandFields] = dataCopy[column.id].map((dataValue) => {
           const record = stores[column.store].find(
             (el) => el[column.storeField] === dataValue.value,
           );
@@ -138,14 +138,18 @@ export const updateData = async (
     stores,
   );
 
-  const data = await updatePbRecord(pb, {
-    collectionName: config.collection,
-    id: updatedPbData.id,
-    body: updatedPbData,
-    expandFields: config.columns
-      .filter((el) => el.expandFields)
-      .map((ele) => ele.expandFields),
-  });
+  const data = await updatePbRecord(
+    pb,
+    {
+      collectionName: config.collection,
+      id: updatedPbData.id,
+      body: updatedPbData,
+      expandFields: config.columns
+        .filter((el) => el.expandFields)
+        .map((ele) => ele.expandFields),
+    },
+    true,
+  );
 
   if (!data) return null;
   if (data.name === 'ClientResponseError 0') return null;

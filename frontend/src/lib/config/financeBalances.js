@@ -1,7 +1,16 @@
 import { COLLECTION_NAMES } from '../collections';
 import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../display';
+import {
+  SUMMARY_ANALYSIS,
+  SUMMARY_ANALYSIS_DISPLAY,
+  SUMMARY_ANALYSIS_DISPLAY_FIELDS,
+  SUMMARY_FILTERS,
+  SUMMARY_PIECES,
+  TIME_FILTERS,
+} from '../summary';
 
 export const CONFIG_FINANCES_BALANCE = {
+  label: 'finance balance',
   collection: COLLECTION_NAMES.FINANCES_BALANCE,
   sort: '-date',
   columns: [
@@ -22,7 +31,7 @@ export const CONFIG_FINANCES_BALANCE = {
       expandFields: 'type',
       expandPath: 'expand.type.account_type',
       selectType: SELECT_TYPES.SINGLE,
-      store: COLLECTION_NAMES.FINANCES_BALANCE_OWNER,
+      store: COLLECTION_NAMES.FINANCES_BALANCE_TYPE,
       storeField: 'account_type',
     },
     {
@@ -31,7 +40,7 @@ export const CONFIG_FINANCES_BALANCE = {
       expandFields: 'owner',
       expandPath: 'expand.owner.name',
       selectType: SELECT_TYPES.SINGLE,
-      store: COLLECTION_NAMES.FINANCES_BALANCE_TYPE,
+      store: COLLECTION_NAMES.FINANCES_BALANCE_OWNER,
       storeField: 'name',
     },
   ],
@@ -59,8 +68,75 @@ export const CONFIG_FINANCES_BALANCE_TYPE = {
       type: TABLE_DISPLAY_TYPES.BADGE,
       expandFields: 'category',
       expandPath: 'expand.category.category',
+      selectType: SELECT_TYPES.SINGLE,
       store: COLLECTION_NAMES.FINANCES_CATEGORY,
       storeField: 'category',
+    },
+  ],
+};
+
+export const CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY = {
+  collection: COLLECTION_NAMES.FINANCES_BALANCE,
+  columns: [
+    { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR },
+    {
+      id: 'account_type',
+      type: TABLE_DISPLAY_TYPES.BADGE,
+      expandFields: 'type',
+      expandPath: 'expand.type.account_type',
+    },
+    {
+      id: 'account_owner',
+      type: TABLE_DISPLAY_TYPES.BADGE,
+      expandFields: 'owner',
+      expandPath: 'expand.owner.name',
+    },
+  ],
+  filters: [
+    {
+      filter: SUMMARY_FILTERS.TIME_FILTER,
+      exclude: [TIME_FILTERS.WEEK],
+    },
+    {
+      filter: SUMMARY_FILTERS.SELECTION_MULTIPLE,
+      store: COLLECTION_NAMES.FINANCES_BALANCE_TYPE,
+      label: 'Select account type',
+      optionField: 'account_type',
+      id: 'account_type',
+    },
+    {
+      filter: SUMMARY_FILTERS.SELECTION_MULTIPLE,
+      store: COLLECTION_NAMES.FINANCES_BALANCE_OWNER,
+      label: 'Select account owner',
+      optionField: 'name',
+      id: 'account_owner',
+    },
+  ],
+  components: [
+    {
+      piece: SUMMARY_PIECES.SUMMARY_TABLE,
+      label: 'Account name sums',
+      analysis: [SUMMARY_ANALYSIS.SUM, SUMMARY_ANALYSIS.LATEST],
+      sumField: 'amount',
+      groupField: 'account_type',
+      latestFields: ['account_name', 'account_type', 'account_owner'],
+      analysisDisplay: SUMMARY_ANALYSIS_DISPLAY.POSITIVE_NEGATIVE_TOTAL,
+      analysisDisplayFields: [
+        {
+          type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.POSITIVE,
+          label: 'Assets: ',
+        },
+        {
+          type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.NEGATIVE,
+          label: 'Liabilities: ',
+        },
+        { type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.TOTAL, label: 'Total: ' },
+      ],
+    },
+    {
+      piece: SUMMARY_PIECES.FULL_TABLE,
+      config: CONFIG_FINANCES_BALANCE,
+      label: 'Finance Balances - filtered',
     },
   ],
 };

@@ -2,6 +2,7 @@ import { SpaceBetween, Tabs } from '@cloudscape-design/components';
 import { useQueries } from '@tanstack/react-query';
 import TableList from '../components/table-list';
 import {
+  CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY,
   CONFIG_FINANCES_BALANCE,
   CONFIG_FINANCES_BALANCE_ACCOUNT_NAME,
   CONFIG_FINANCES_BALANCE_OWNER,
@@ -11,6 +12,7 @@ import { SELECT_TYPES } from '../lib/display';
 import useMyStore from '../store/useStore';
 import { fetchPbRecordList } from '../utils/api';
 import { pbRecordsToUseCollectionData, transfomer } from '../utils/data';
+import Summary from '../components/summary';
 
 export default function FinanceBalances() {
   const configs = [
@@ -118,6 +120,7 @@ export default function FinanceBalances() {
           },
         ]}
       />
+      <Summary config={CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY} />
     </SpaceBetween>
   );
 }

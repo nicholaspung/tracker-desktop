@@ -16,6 +16,7 @@ import { SelectFilter } from './summary/select-filter';
 import { LAYOUT_PIECES } from '../lib/layout';
 import { ColumnComponent } from './summary/column-component';
 import MultiSelectFilter from './summary/multiselect-filter';
+import { SummaryTableComponent } from './summary/summary-table-component';
 
 export default function Summary({ config }) {
   const storeNames = getStoreNamesFromConfigFilters(config);
@@ -159,7 +160,23 @@ export default function Summary({ config }) {
                   config={component.config}
                   label={component.label}
                   variant="embedded"
-                  key={`${i}${component.layout}`}
+                  key={`${i}${component.layout || component.piece}`}
+                />
+              );
+            }
+            if (component.piece === SUMMARY_PIECES.SUMMARY_TABLE) {
+              return (
+                <SummaryTableComponent
+                  data={filteredData}
+                  config={config}
+                  label={component.label}
+                  analysis={component.analysis}
+                  analysisDisplay={component.analysisDisplay}
+                  analysisDisplayFields={component.analysisDisplayFields}
+                  sumField={component.sumField}
+                  groupField={component.groupField}
+                  latestFields={component.latestFields}
+                  key={`${i}${component.piece}`}
                 />
               );
             }

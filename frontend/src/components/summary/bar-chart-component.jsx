@@ -22,7 +22,7 @@ export default function BarChartComponent({
 }) {
   let analyzedData = data;
 
-  if (analysis === SUMMARY_ANALYSIS.SUM) {
+  if (analysis.includes(SUMMARY_ANALYSIS.SUM)) {
     analyzedData = sumDataAccordingToFields(data, sumField, groupField);
   }
 

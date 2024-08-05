@@ -120,3 +120,19 @@ export const isValidRange = ({ startDate, endDate, year, month, day }) => {
     isDateEnabled(endDateObj, { year, month, day })
   );
 };
+
+export function findLatestDate(dates) {
+  // Check if the array is empty
+  if (dates.length === 0) {
+    return null; // or you could return undefined, depending on your preference
+  }
+
+  // Sort the dates in descending order
+  const sortedDates = dates.sort((a, b) =>
+    // We can directly compare the strings since they're in 'YYYY-MM-DD' format
+    b.localeCompare(a),
+  );
+
+  // Return the first (latest) date
+  return sortedDates[0];
+}

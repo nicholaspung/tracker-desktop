@@ -1,7 +1,13 @@
 import { SUMMARY_FILTERS, TIME_FILTERS } from '../lib/summary';
-import { isCurrentMonth, isCurrentYear } from './date';
+import {
+  dateToDatePicker,
+  findLatestDate,
+  isCurrentMonth,
+  isCurrentYear,
+} from './date';
 import { ALL_OPTION } from './misc';
 
+// data: [{normal pb entry}]
 export const sumDataAccordingToFields = (data, sumField, groupField) => {
   const groupFieldObj = {};
 
@@ -11,7 +17,7 @@ export const sumDataAccordingToFields = (data, sumField, groupField) => {
 
     if (!groupFieldObj[groupValue]) {
       groupFieldObj[groupValue] = {
-        id: el.id,
+        ...el,
         [sumField]: sumValue,
         [groupField]: groupValue,
       };
@@ -22,6 +28,51 @@ export const sumDataAccordingToFields = (data, sumField, groupField) => {
 
   return Object.keys(groupFieldObj).map((el) => groupFieldObj[el]);
 };
+
+export const latestDataAccordingToField = (
+  // [{normal pb entry}]
+  data,
+  latestFields,
+  dateField = 'date',
+) => {
+  // { identifier: { date: [el, el]}}
+  const dataSet = {};
+
+  data.forEach((el) => {
+    const date = dateToDatePicker(new Date(el[dateField]));
+    const identifier = latestFields.reduce((acc, curr) => {
+      const name = el[curr];
+      if (!acc) {
+        return name;
+      }
+      return `${acc}-${name}`;
+    }, '');
+
+    if (!dataSet[identifier]) {
+      dataSet[identifier] = { [date]: [el] };
+      // { 'fdas': { date: [{}}}
+    } else if (dataSet[identifier]) {
+      if (dataSet[identifier][date]) {
+        // { 'fdas': { date: [{}, {}]}}
+        const prev = [...dataSet[identifier][date]];
+        prev.push(el);
+        dataSet[identifier][date] = prev;
+      } else {
+        // { 'fdas': { date: [{}, {}]}, { date2: [{}]}}
+        dataSet[identifier][date] = [el];
+      }
+    }
+  });
+
+  const result = [];
+  Object.keys(dataSet).forEach((unique) => {
+    const latestDate = findLatestDate(Object.keys(dataSet[unique]));
+    result.push(dataSet[unique][latestDate]);
+  });
+
+  return result.flat();
+};
+
 export const barChartDataAccordingToFields = (
   data,
   titleField,
@@ -50,24 +101,24 @@ export const barChartDataAccordingToFields = (
   }));
 };
 
-const dateFilterFunction = (el, filterOptions) => {
+const dateFilterFunction = (el, filterOptions, dateField = 'date') => {
   if (filterOptions.timeFrame) {
     if (filterOptions.timeFilter.value === TIME_FILTERS.MONTH) {
       return isCurrentMonth(
-        new Date(el.date),
+        new Date(el[dateField]),
         new Date(filterOptions.timeFrame[TIME_FILTERS.MONTH]),
       );
     }
     if (filterOptions.timeFilter.value === TIME_FILTERS.YEAR) {
       return isCurrentYear(
-        new Date(el.date),
+        new Date(el[dateField]),
         new Date(String(filterOptions.timeFrame[TIME_FILTERS.YEAR].value)),
       );
     }
     return (
-      new Date(el.date) >=
+      new Date(el[dateField]) >=
         new Date(filterOptions.timeFrame[TIME_FILTERS.DATE_RANGE].startDate) &&
-      new Date(el.date) <=
+      new Date(el[dateField]) <=
         new Date(filterOptions.timeFrame[TIME_FILTERS.DATE_RANGE].endDate)
     );
   }
@@ -117,12 +168,14 @@ export const filterDataAccordingtoFilterOptions = (
           try {
             const parsedData = JSON.stringify(el[id]);
             if (Array.isArray(selection)) {
+              let arrayOverride = true; // start off assuming it will be false
               for (let j = 0; j < selection.length; j += 1) {
-                if (!parsedData.includes(selection[j].value)) {
-                  override = true;
+                if (parsedData.includes(selection[j].value)) {
+                  arrayOverride = false;
                   break;
                 }
               }
+              override = arrayOverride;
               break;
             }
           } catch (err) {

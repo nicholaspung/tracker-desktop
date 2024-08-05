@@ -22,6 +22,8 @@ export function ColumnComponent({
               config={config}
               label={piece.label}
               analysis={piece.analysis}
+              analysisDisplay={piece.analysisDisplay}
+              analysisDisplayFields={piece.analysisDisplayFields}
               sumField={piece.sumField}
               groupField={piece.groupField}
               key={`${i}${piece.piece}`}

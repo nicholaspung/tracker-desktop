@@ -2,24 +2,38 @@ import { Box, SpaceBetween } from '@cloudscape-design/components';
 import TableList from '../table-list';
 import { convertToDollar } from '../../utils/display';
 import { totalSumOfDataAccordingToField } from '../../utils/math';
-import { SUMMARY_ANALYSIS } from '../../lib/summary';
-import { sumDataAccordingToFields } from '../../utils/analysis';
+import {
+  SUMMARY_ANALYSIS,
+  SUMMARY_ANALYSIS_DISPLAY,
+  SUMMARY_ANALYSIS_DISPLAY_FIELDS,
+} from '../../lib/summary';
+import {
+  latestDataAccordingToField,
+  sumDataAccordingToFields,
+} from '../../utils/analysis';
 
 export function SummaryTableComponent({
   data,
   config,
   label,
   analysis,
+  analysisDisplay,
+  analysisDisplayFields,
   sumField,
   groupField,
+  latestFields,
 }) {
   let total;
   let positive;
   let negative;
   let analyzedData = data;
 
-  if (analysis === SUMMARY_ANALYSIS.SUM) {
-    analyzedData = sumDataAccordingToFields(data, sumField, groupField);
+  if (analysis.includes(SUMMARY_ANALYSIS.LATEST)) {
+    analyzedData = latestDataAccordingToField(analyzedData, latestFields);
+  }
+
+  if (analysis.includes(SUMMARY_ANALYSIS.SUM)) {
+    analyzedData = sumDataAccordingToFields(analyzedData, sumField, groupField);
     const totalSum = totalSumOfDataAccordingToField(analyzedData, sumField);
     total = totalSum.total;
     positive = totalSum.positive;
@@ -37,21 +51,37 @@ export function SummaryTableComponent({
         variant="embedded"
       />
       <hr />
-      {analysis === SUMMARY_ANALYSIS.SUM ? (
+      {analysisDisplay === SUMMARY_ANALYSIS_DISPLAY.POSITIVE_NEGATIVE_TOTAL ? (
         <Box>
-          <p>
-            <strong>Income + Cash: </strong>
-            {convertToDollar(positive)}
-          </p>
-          <p>
-            <strong>Spend: </strong>
-            {convertToDollar(negative)}
-          </p>
-          <hr />
-          <p>
-            <strong>Total: </strong>
-            {convertToDollar(total)}
-          </p>
+          {analysisDisplayFields
+            ? analysisDisplayFields.map((el) => {
+                if (el.type === SUMMARY_ANALYSIS_DISPLAY_FIELDS.POSITIVE) {
+                  return (
+                    <p key={el.label}>
+                      <strong>{el.label}</strong>
+                      {convertToDollar(positive)}
+                    </p>
+                  );
+                }
+                if (el.type === SUMMARY_ANALYSIS_DISPLAY_FIELDS.NEGATIVE) {
+                  return (
+                    <p key={el.label}>
+                      <strong>{el.label}</strong>
+                      {convertToDollar(negative)}
+                    </p>
+                  );
+                }
+                if (el.type === SUMMARY_ANALYSIS_DISPLAY_FIELDS.TOTAL) {
+                  return (
+                    <p key={el.label}>
+                      <strong>{el.label}</strong>
+                      {convertToDollar(total)}
+                    </p>
+                  );
+                }
+                return null;
+              })
+            : null}
         </Box>
       ) : null}
     </SpaceBetween>

@@ -19,4 +19,15 @@ export const SUMMARY_PIECES = {
 
 export const SUMMARY_ANALYSIS = {
   SUM: 'sum',
+  LATEST: 'latest',
+};
+
+export const SUMMARY_ANALYSIS_DISPLAY = {
+  POSITIVE_NEGATIVE_TOTAL: 'positive-negative-total',
+};
+
+export const SUMMARY_ANALYSIS_DISPLAY_FIELDS = {
+  POSITIVE: 'positive',
+  NEGATIVE: 'negative',
+  TOTAL: 'total',
 };

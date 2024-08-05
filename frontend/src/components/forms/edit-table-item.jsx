@@ -54,7 +54,7 @@ export default function EditTableItem({
             )
           }
         >
-          Editing a finance log
+          {`Editing a ${config.label}`}
         </Header>
       }
       footer={
