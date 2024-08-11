@@ -19,12 +19,14 @@ export const CONFIG_FINANCES_BALANCE = {
     { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR },
     {
       id: 'account_name',
-      type: TABLE_DISPLAY_TYPES.BADGE,
+      type: TABLE_DISPLAY_TYPES.TEXT,
       expandFields: 'account_name',
       expandPath: 'expand.account_name.name',
       selectType: SELECT_TYPES.SINGLE,
       store: COLLECTION_NAMES.FINANCES_BALANCE_ACCOUNT_NAME,
       storeField: 'name',
+      overrideStore: COLLECTION_NAMES.FINANCES_BALANCE,
+      autoSuggestFieldIds: ['account_type', 'account_owner'],
     },
     {
       id: 'account_type',
@@ -63,7 +65,11 @@ export const CONFIG_FINANCES_BALANCE_TYPE = {
   collection: COLLECTION_NAMES.FINANCES_BALANCE_TYPE,
   sort: 'account_type',
   columns: [
-    { id: 'account_type', type: TABLE_DISPLAY_TYPES.TEXT },
+    {
+      id: 'account_type',
+      type: TABLE_DISPLAY_TYPES.TEXT,
+      autoSuggestFieldIds: ['category'],
+    },
     {
       id: 'category',
       type: TABLE_DISPLAY_TYPES.BADGE,
@@ -156,6 +162,8 @@ export const CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY = {
       piece: SUMMARY_PIECES.FULL_TABLE,
       config: CONFIG_FINANCES_BALANCE,
       label: 'Finance Balances - filtered',
+      analysis: [SUMMARY_ANALYSIS.LATEST],
+      latestFields: ['account_name', 'account_type', 'account_owner'],
     },
   ],
 };

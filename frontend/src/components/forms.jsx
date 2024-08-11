@@ -1,62 +1,67 @@
-import { DatePicker, FormField, Input } from '@cloudscape-design/components';
+import {
+  Autosuggest,
+  DatePicker,
+  FormField,
+  Input,
+} from '@cloudscape-design/components';
 import { useState } from 'react';
-import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../lib/display';
+import { TABLE_DISPLAY_TYPES } from '../lib/display';
 import { convertToTitleCase } from '../utils/display';
 import SelectWithData from './forms/selectWithData';
-import { dateToDatePicker } from '../utils/date';
+import {
+  getAutoSuggestDataFromColumn,
+  getInitialDataFormat,
+  getStoreValueFromConfig,
+} from '../utils/forms';
+import useMyStore from '../store/useStore';
+import { getStoreValuesFromConfig } from '../utils/store';
 import { toOptions } from '../utils/misc';
 
-export default function Forms({ columns, defaultData, setDataUpstream }) {
-  const initialData = columns.reduce(
-    (acc, curr) => {
-      let value;
-      const DEFAULT_VALUES = {
-        [TABLE_DISPLAY_TYPES.DATE]: dateToDatePicker(),
-        [TABLE_DISPLAY_TYPES.BADGE]:
-          curr.selectType === SELECT_TYPES.MULTIPLE ? [] : '',
-        [TABLE_DISPLAY_TYPES.DOLLAR]: '',
-        [TABLE_DISPLAY_TYPES.TEXT]: '',
-      };
-      const returnData = (column, data, displayType) =>
-        data && data[column.id] ? data[column.id] : DEFAULT_VALUES[displayType];
-      switch (curr.type) {
-        case TABLE_DISPLAY_TYPES.DATE:
-          value = returnData(curr, defaultData, TABLE_DISPLAY_TYPES.DATE);
-          break;
-        case TABLE_DISPLAY_TYPES.BADGE:
-          const badgeValue = returnData(
-            curr,
-            defaultData,
-            TABLE_DISPLAY_TYPES.BADGE,
-          );
-          if ((Array.isArray(badgeValue) && badgeValue.length) || badgeValue) {
-            value = toOptions(badgeValue);
-          }
-          break;
-        case TABLE_DISPLAY_TYPES.DOLLAR:
-        case TABLE_DISPLAY_TYPES.TEXT:
-        default:
-          value = returnData(curr, defaultData, TABLE_DISPLAY_TYPES.TEXT);
-      }
-      acc[curr.id] = value;
-      return acc;
-    },
-    defaultData && defaultData.id ? { id: defaultData.id } : {},
-  );
+export default function Forms({ config, defaultData, setDataUpstream }) {
+  const initialData = getInitialDataFormat(config.columns, defaultData);
+
+  const storeValues = useMyStore((state) => {
+    const result = {
+      pb: state.pb,
+      [config.collection]: state[config.collection],
+      setDataInStore: state.setDataInStore,
+      replaceItemInStore: state.replaceItemInStore,
+      removeItemInStore: state.removeItemInStore,
+    };
+    return { ...result, ...getStoreValuesFromConfig(state, config) };
+  });
 
   const [data, setData] = useState(initialData);
 
-  const onChange = async (el, detail, detailField) => {
+  const onChange = async (el, detail, detailField, changeFunc) => {
     let dataForUpstream;
     await setData((prev) => {
-      const result = { ...prev, [el.id]: detail[detailField] };
+      const detailValue = detail[detailField];
+      const result = { ...prev, [el.id]: detailValue };
+      if (changeFunc === 'onSelect') {
+        result[el.id] = detailValue.value;
+      }
+      if (detailValue.tags && detailValue.filteringTags) {
+        result[el.id] = detailValue.value;
+        detailValue.filteringTags.forEach((columnId, i) => {
+          // assume autosuggestfields are always a selection until otherwise
+          if (detailValue.tags[i].includes(', ')) {
+            const newTagsValue = detailValue.tags[i]
+              .split(', ')
+              .filter((ele) => ele);
+            result[columnId] = toOptions(newTagsValue);
+          } else {
+            result[columnId] = toOptions(detailValue.tags[i]);
+          }
+        });
+      }
       dataForUpstream = result;
       return result;
     });
     await setDataUpstream(dataForUpstream);
   };
 
-  return columns.map((el) => {
+  return config.columns.map((el) => {
     switch (el.type) {
       case TABLE_DISPLAY_TYPES.DATE:
         return (
@@ -89,13 +94,23 @@ export default function Forms({ columns, defaultData, setDataUpstream }) {
           </FormField>
         );
       case TABLE_DISPLAY_TYPES.TEXT:
+        const storeValue = getStoreValueFromConfig(storeValues, config, el);
+        const autoSuggestData = getAutoSuggestDataFromColumn(storeValue, el);
         return (
           <FormField key={el.id} label={convertToTitleCase(el.id)}>
-            <Input
-              type="text"
-              placeholder="Type description here"
-              value={data[el.id]}
+            <Autosuggest
+              autoFocus
+              expandToViewport
               onChange={({ detail }) => onChange(el, detail, 'value')}
+              onSelect={({ detail }) =>
+                onChange(el, detail, 'selectedOption', 'onSelect')
+              }
+              value={data[el.id]}
+              options={autoSuggestData}
+              enteredTextLabel={(value) => `Use: "${value}"`}
+              ariaLabel="Autosuggest example with suggestions"
+              placeholder="Enter value"
+              empty="No matches found"
             />
           </FormField>
         );

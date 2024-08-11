@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Header,
+  SegmentedControl,
   SpaceBetween,
   Spinner,
 } from '@cloudscape-design/components';
@@ -10,6 +11,8 @@ import Forms from './forms';
 import { addData } from '../utils/data';
 import useMyStore from '../store/useStore';
 import { getStoreNamesFromConfigColumns } from '../utils/store';
+import AddMultipleItems from './add-multiple-items';
+import { INPUT_TYPES } from '../lib/forms';
 
 export default function AddItemModal({
   ModalComponent,
@@ -27,21 +30,50 @@ export default function AddItemModal({
   });
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [selectedId, setSelectedId] = useState(INPUT_TYPES.SINGLE);
 
   const onSave = async () => {
     setLoading(true);
-    await addData(storeValues.pb, config, {
-      stores: storeValues,
-      newData: data,
-      addItemToStore: storeValues.addItemToStore,
-    });
-    setLoading(false);
-    setVisible(false);
+    if (selectedId === INPUT_TYPES.SINGLE) {
+      try {
+        await addData(storeValues.pb, config, {
+          stores: storeValues,
+          newData: data,
+          addItemToStore: storeValues.addItemToStore,
+        });
+        setData(null);
+        setLoading(false);
+        setVisible(false);
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
+    } else {
+      console.log(data);
+    }
   };
 
   return (
     <ModalComponent
-      header={<Header>{label}</Header>}
+      size={selectedId === INPUT_TYPES.SINGLE ? 'large' : 'max'}
+      header={
+        <Header
+          actions={
+            <SegmentedControl
+              selectedId={selectedId}
+              onChange={({ detail }) => setSelectedId(detail.selectedId)}
+              label="Input method"
+              options={[
+                { text: 'Add single', id: INPUT_TYPES.SINGLE },
+                { text: 'Add multiple', id: INPUT_TYPES.MULTIPLE },
+                { text: 'Import multiple', id: INPUT_TYPES.IMPORT },
+              ]}
+            />
+          }
+        >
+          {label}
+        </Header>
+      }
       footer={
         <Box float="right">
           <SpaceBetween size="xs" direction="horizontal">
@@ -54,7 +86,25 @@ export default function AddItemModal({
       }
     >
       <SpaceBetween size="xs" direction="vertical">
-        <Forms columns={config.columns} setDataUpstream={setData} />
+        {selectedId === INPUT_TYPES.SINGLE ? (
+          <Forms config={config} setDataUpstream={setData} />
+        ) : null}
+        {selectedId === INPUT_TYPES.MULTIPLE ? (
+          <AddMultipleItems
+            type={INPUT_TYPES.MANUAL}
+            label="Items"
+            config={config}
+            setDataUpstream={setData}
+          />
+        ) : null}
+        {selectedId === INPUT_TYPES.IMPORT ? (
+          <AddMultipleItems
+            type={INPUT_TYPES.IMPORT}
+            label="Imported items"
+            config={config}
+            setDataUpstream={setData}
+          />
+        ) : null}
       </SpaceBetween>
     </ModalComponent>
   );

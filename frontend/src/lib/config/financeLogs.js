@@ -17,7 +17,12 @@ export const CONFIG_FINANCES_LOG = {
   columns: [
     { id: 'date', type: TABLE_DISPLAY_TYPES.DATE },
     { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR },
-    { id: 'description', type: TABLE_DISPLAY_TYPES.TEXT },
+    {
+      id: 'description',
+      type: TABLE_DISPLAY_TYPES.TEXT,
+      overrideStore: COLLECTION_NAMES.FINANCES_LOG,
+      autoSuggestFieldIds: ['category', 'tags'],
+    },
     {
       id: 'category',
       type: TABLE_DISPLAY_TYPES.BADGE,

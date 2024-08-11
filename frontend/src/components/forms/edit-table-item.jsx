@@ -74,7 +74,7 @@ export default function EditTableItem({
       }
     >
       <Forms
-        columns={config.columns}
+        config={config}
         defaultData={selectedItem}
         setDataUpstream={setEditedData}
       />

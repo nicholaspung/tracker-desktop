@@ -1,12 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCollection } from '@cloudscape-design/collection-hooks';
 import {
   Button,
-  Grid,
   Header,
   Icon,
   Pagination,
-  Spinner,
+  SpaceBetween,
   Table,
   TextFilter,
 } from '@cloudscape-design/components';
@@ -15,55 +14,46 @@ import {
   getDefaultPreferences,
 } from '../utils/preferences';
 import EmptyState from './empty-state';
-import { getColumnDefinitions } from '../utils/table';
+import { getColumnDefinitionsForEdits } from '../utils/table';
 import { getTextFilterCounterText } from '../utils/text-filter';
 import { convertToTitleCase } from '../utils/display';
 import Preferences from './preferences';
-import { SELECT_TYPES } from '../lib/display';
 import useMyStore from '../store/useStore';
-import { getStoreNamesFromConfigColumns } from '../utils/store';
-import EditTableItem from './forms/edit-table-item';
-import { SUMMARY_ANALYSIS } from '../lib/summary';
-import { latestDataAccordingToField } from '../utils/analysis';
+import { getInitialDataFormat } from '../utils/forms';
+import { itemExists } from '../utils/misc';
+import { TABLE_DISPLAY_TYPES } from '../lib/display';
+import { getStoreValuesFromConfig } from '../utils/store';
 
-export default function TableList({
-  data,
+export default function AddMultipleItems({
   config,
   label,
-  isLoading = false,
-  refetch,
+  type,
+  setDataUpstream,
   hideHeader,
-  variant = 'container',
   hidePagination,
   hidePreferences,
   hideFilter,
-  selectionType,
-  analysis,
-  latestFields,
 }) {
   const storeValues = useMyStore((state) => {
-    const storeNames = getStoreNamesFromConfigColumns(config);
     const result = {
       pb: state.pb,
-      data: state[config.collection],
+      [config.collection]: state[config.collection],
       setDataInStore: state.setDataInStore,
       replaceItemInStore: state.replaceItemInStore,
       removeItemInStore: state.removeItemInStore,
     };
-    if (data) {
-      delete result.data;
-    }
-    storeNames.forEach((store) => {
-      result[store] = state[store];
-    });
-    return result;
+    return { ...result, ...getStoreValuesFromConfig(state, config) };
   });
 
-  let tableData = data || storeValues.data;
-  if (analysis && latestFields && analysis.includes(SUMMARY_ANALYSIS.LATEST)) {
-    tableData = latestDataAccordingToField(tableData, latestFields);
-  }
+  const emptyValue = getInitialDataFormat([
+    ...config.columns,
+    { id: 'id', type: TABLE_DISPLAY_TYPES.ID },
+  ]);
+  const [addData, setAddData] = useState([emptyValue]);
 
+  useEffect(() => {
+    setDataUpstream(addData);
+  }, []);
   const [preferences, setPreferences] = useState(
     getDefaultPreferences(config.columns),
   );
@@ -75,7 +65,7 @@ export default function TableList({
     collectionProps,
     filterProps,
     paginationProps,
-  } = useCollection(tableData, {
+  } = useCollection(addData, {
     filtering: {
       empty: <EmptyState title={`No ${label.toLowerCase()}`} />,
       noMatch: (
@@ -96,9 +86,34 @@ export default function TableList({
 
   const { selectedItems } = collectionProps;
 
+  const onAddIcon = () => {
+    setAddData([...addData, emptyValue]);
+  };
+  const onTrashIcon = () => {
+    if (!itemExists(selectedItems)) return;
+
+    setAddData((prev) =>
+      prev.filter((el) => {
+        if (selectedItems.find((ele) => ele.id === el.id)) {
+          return false;
+        }
+        return true;
+      }),
+    );
+  };
+
   const tableProps = {
     ...collectionProps,
-    columnDefinitions: getColumnDefinitions(config.columns),
+    columnDefinitions: getColumnDefinitionsForEdits(
+      {
+        ...config,
+        columns: [
+          ...config.columns,
+          { id: 'id', type: TABLE_DISPLAY_TYPES.TEXT },
+        ],
+      },
+      storeValues,
+    ),
     enableKeyboardNavigation: true,
     items,
     columnDisplay: preferences.contentDisplay,
@@ -106,18 +121,20 @@ export default function TableList({
     stripedRows: preferences.stripedRows,
     contentDensity: preferences.contentDensity,
     loadingText: 'Loading resources',
-    loading: isLoading,
-    variant,
-    trackBy: 'id',
+    variant: 'embedded',
     header: !hideHeader ? (
       <Header
-        counter={`(${tableData.length})`}
+        counter={`(${addData.length})`}
         actions={
-          refetch ? (
-            <Button onClick={refetch}>
-              {isLoading ? <Spinner /> : <Icon name="refresh" />}
+          <SpaceBetween size="xs" direction="horizontal">
+            <Button variant="primary" onClick={onAddIcon}>
+              <Icon name="add-plus" />
             </Button>
-          ) : null
+            <Button onClick={onTrashIcon}>
+              <Icon name="remove" />
+            </Button>
+            <Button onClick={() => console.log(addData)}>Log</Button>
+          </SpaceBetween>
         }
       >
         {label}
@@ -141,53 +158,9 @@ export default function TableList({
         useStripedRowsPreference
       />
     ) : null,
-    selectionType,
-    isItemDisabled: (item) => {
-      if (selectedItems.length) {
-        if (selectedItems.find((el) => item.id === el.id)) {
-          return false;
-        }
-        return true;
-      }
-      return false;
-    },
+    selectionType: 'multi',
+    submitEdit: (e) => console.log(e),
   };
 
-  const [editedData, setEditedData] = useState(null);
-
-  const clearSelection = async () => {
-    actions.setSelectedItems([]);
-    await setEditedData(null);
-  };
-
-  return selectionType === SELECT_TYPES.SINGLE && selectedItems.length > 0 ? (
-    <Grid
-      gridDefinition={[
-        {
-          colspan: {
-            default: 12,
-            s: 4,
-          },
-        },
-        {
-          colspan: {
-            default: 12,
-            s: 8,
-          },
-        },
-      ]}
-    >
-      <EditTableItem
-        storeValues={storeValues}
-        config={config}
-        selectedItem={selectedItems[0]}
-        clearSelection={clearSelection}
-        editedData={editedData}
-        setEditedData={setEditedData}
-      />
-      <Table {...tableProps} />
-    </Grid>
-  ) : (
-    <Table {...tableProps} />
-  );
+  return <Table {...tableProps} />;
 }

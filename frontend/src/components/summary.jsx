@@ -160,6 +160,8 @@ export default function Summary({ config }) {
                   config={component.config}
                   label={component.label}
                   variant="embedded"
+                  analysis={component.analysis}
+                  latestFields={component.latestFields}
                   key={`${i}${component.layout || component.piece}`}
                 />
               );

@@ -35,6 +35,7 @@ export const latestDataAccordingToField = (
   latestFields,
   dateField = 'date',
 ) => {
+  if (!latestFields) return data;
   // { identifier: { date: [el, el]}}
   const dataSet = {};
 

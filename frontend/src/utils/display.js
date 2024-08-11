@@ -1,3 +1,5 @@
+import { itemExists } from './misc';
+
 /**
  * Converts a string from snake_case to Title Case.
  *
@@ -20,7 +22,11 @@ export function convertToTitleCase(str) {
 }
 
 export function convertToDollar(str) {
-  return str.toLocaleString('en-US', {
+  let newStr = str;
+  if (!itemExists(str)) {
+    newStr = 0;
+  }
+  return newStr.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
   });

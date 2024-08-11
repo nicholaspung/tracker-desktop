@@ -5,7 +5,7 @@ import {
   fetchPbRecordList,
   updatePbRecord,
 } from './api';
-import { SELECT_TYPES } from '../lib/display';
+import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../lib/display';
 
 export const transfomer = (el, config) => {
   const transform = { id: el.id };
@@ -80,7 +80,17 @@ export const getListData = async (
 const transformDataToPbRecordData = (config, data, stores) => {
   const dataCopy = { ...data };
   config.columns.forEach((column) => {
-    if (column.store) {
+    if (column.type === TABLE_DISPLAY_TYPES.DATE) {
+      const dataDate = new Date(dataCopy[column.id]);
+      const year = dataDate.getFullYear();
+      const month = dataDate.getMonth();
+      const day = dataDate.getUTCDate();
+      const now = new Date();
+      const hour = now.getHours();
+      const min = now.getMinutes();
+      dataCopy[column.id] = new Date(year, month, day, hour, min).toISOString();
+    }
+    if (column.store && dataCopy[column.id]) {
       if (column.selectType === SELECT_TYPES.SINGLE) {
         const record = stores[column.store].find(
           (el) => el[column.storeField] === dataCopy[column.id].value,
