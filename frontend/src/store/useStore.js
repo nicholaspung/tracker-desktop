@@ -3,6 +3,8 @@ import Pocketbase from 'pocketbase';
 import { Density, Mode } from '@cloudscape-design/global-styles';
 import { COLLECTION_NAMES } from '../lib/collections';
 import { densityOpts, modeOpts } from '../lib/theme';
+import { fetchPbRecordList } from '../utils/api';
+import { pbRecordsToUseCollectionData, transformer } from '../utils/data';
 
 const pb = new Pocketbase('http://127.0.0.1:8090');
 
@@ -134,6 +136,26 @@ const useMyStore = create((set) => ({
 
       const newData = data.filter((el) => el.id !== id);
       return { [store]: newData };
+    }),
+  fetchPbRecordList: (config) =>
+    set(async (state) => {
+      const result = await fetchPbRecordList(state.pb, {
+        collectionName: config.collection,
+        expandFields: Array.isArray(config.columns)
+          ? config.columns
+              .filter((el) => el.expandFields)
+              .map((ele) => ele.expandFields)
+          : undefined,
+        sort: config.sort,
+      });
+
+      const transformedResult = pbRecordsToUseCollectionData(
+        result,
+        transformer,
+        config,
+      );
+
+      state.setDataInStore(config.collection, transformedResult);
     }),
 }));
 

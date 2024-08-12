@@ -26,6 +26,9 @@ export function convertToDollar(str) {
   if (!itemExists(str)) {
     newStr = 0;
   }
+  if (typeof newStr === 'string') {
+    newStr = Number(newStr);
+  }
   return newStr.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',

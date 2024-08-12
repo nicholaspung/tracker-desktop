@@ -82,6 +82,15 @@ export const fieldEditorSelector = ({
         autoFocus
         expandToViewport
         onChange={({ detail }) => setValue(detail.value, column)}
+        onSelect={({ detail }) => {
+          if (detail.selectedOption) {
+            const updatedValue = { [column.id]: detail.selectedOption.value };
+            detail.selectedOption.filteringTags.forEach((col, index) => {
+              updatedValue[col] = detail.selectedOption.tags[index];
+            });
+            setValue(JSON.stringify(updatedValue));
+          }
+        }}
         value={currentValue}
         options={data}
         enteredTextLabel={(value) => `Use: "${value}"`}
@@ -239,6 +248,7 @@ export const getColumnDefinitionsForEdits = (config, storeValues) =>
     cell: (item) => columnCell(el, item),
     sortingField: el.id,
     editConfig: {
+      autoSuggestFields: el.autoSuggestFields ? el.autoSuggestFields : null,
       ariaLabel: convertToTitleCase(el.id),
       editIconAriaLabel: 'editable',
       errorIconAriaLabel: `${convertToTitleCase(el.id)} Error`,

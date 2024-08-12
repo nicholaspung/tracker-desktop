@@ -10,8 +10,6 @@ import {
 } from '../lib/config';
 import { SELECT_TYPES } from '../lib/display';
 import useMyStore from '../store/useStore';
-import { fetchPbRecordList } from '../utils/api';
-import { pbRecordsToUseCollectionData, transfomer } from '../utils/data';
 import Summary from '../components/summary';
 
 export default function FinanceBalances() {
@@ -21,31 +19,13 @@ export default function FinanceBalances() {
     CONFIG_FINANCES_BALANCE_OWNER,
     CONFIG_FINANCES_BALANCE_TYPE,
   ];
-  const { pb, setDataInStore } = useMyStore((state) => ({
-    pb: state.pb,
-    setDataInStore: state.setDataInStore,
+  const { fetchPbRecordList } = useMyStore((state) => ({
+    fetchPbRecordList: state.fetchPbRecordList,
   }));
 
   const fetchData = async (config) => {
-    const result = await fetchPbRecordList(pb, {
-      collectionName: config.collection,
-      expandFields: Array.isArray(config.columns)
-        ? config.columns
-            .filter((el) => el.expandFields)
-            .map((ele) => ele.expandFields)
-        : undefined,
-      sort: config.sort,
-    });
-
-    const transformedResult = pbRecordsToUseCollectionData(
-      result,
-      transfomer,
-      config,
-    );
-
-    setDataInStore(config.collection, transformedResult);
-
-    return transformedResult;
+    await fetchPbRecordList(config);
+    return true;
   };
 
   const queries = useQueries({

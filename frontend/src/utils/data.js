@@ -7,7 +7,7 @@ import {
 } from './api';
 import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../lib/display';
 
-export const transfomer = (el, config) => {
+export const transformer = (el, config) => {
   const transform = { id: el.id };
   config.columns.forEach((ele) => {
     const { id } = ele;
@@ -64,7 +64,7 @@ export const getListData = async (
 
   const transformedData = pbRecordsToUseCollectionData(
     data,
-    transfomer,
+    transformer,
     config,
   );
 
@@ -127,7 +127,11 @@ export const addData = async (
   if (!data) return null;
   if (data.name === 'ClientResponseError 0') return null;
 
-  const transformedData = pbRecordToUseCollectionData(data, transfomer, config);
+  const transformedData = pbRecordToUseCollectionData(
+    data,
+    transformer,
+    config,
+  );
   if (!addItemToStore) {
     return transformedData;
   }
@@ -164,7 +168,11 @@ export const updateData = async (
   if (!data) return null;
   if (data.name === 'ClientResponseError 0') return null;
 
-  const transformedData = pbRecordToUseCollectionData(data, transfomer, config);
+  const transformedData = pbRecordToUseCollectionData(
+    data,
+    transformer,
+    config,
+  );
   if (!replaceItemInStore) {
     return transformedData;
   }

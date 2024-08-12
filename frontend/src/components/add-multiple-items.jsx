@@ -102,6 +102,47 @@ export default function AddMultipleItems({
     );
   };
 
+  const onSubmitEdit = async (item, column, newValue) => {
+    const index = addData.findIndex((el) => el.id === item.id);
+    const itemCopy = addData[index];
+    try {
+      const parsedValue = JSON.parse(newValue);
+      if (typeof parsedValue === 'object') {
+        Object.keys(parsedValue).forEach((key) => {
+          if (key === column.id) {
+            itemCopy[column.id] = parsedValue[key];
+          } else if (parsedValue[key].includes(', ')) {
+            const newTagsValue = parsedValue[key]
+              .split(', ')
+              .filter((ele) => ele)
+              .sort();
+            itemCopy[key] = newTagsValue;
+          } else {
+            itemCopy[key] = parsedValue[key];
+          }
+        });
+      } else if (typeof parsedValue === 'number') {
+        itemCopy[column.id] = newValue;
+      }
+    } catch (err) {
+      // for multiple badges
+      if (Array.isArray(newValue)) {
+        if (newValue.length && typeof newValue[0] === 'object') {
+          itemCopy[column.id] = newValue.map((el) => el.value);
+        } else {
+          itemCopy[column.id] = [];
+        }
+      } else {
+        // for regular text and date
+        itemCopy[column.id] = newValue;
+      }
+    }
+    // for some reason, itemCopy is also written in addData, so no
+    // need to update using setState
+
+    await setDataUpstream(addData);
+  };
+
   const tableProps = {
     ...collectionProps,
     columnDefinitions: getColumnDefinitionsForEdits(
@@ -159,7 +200,7 @@ export default function AddMultipleItems({
       />
     ) : null,
     selectionType: 'multi',
-    submitEdit: (e) => console.log(e),
+    submitEdit: onSubmitEdit,
   };
 
   return <Table {...tableProps} />;

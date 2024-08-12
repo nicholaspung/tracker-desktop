@@ -6,13 +6,14 @@ import {
   SpaceBetween,
   Spinner,
 } from '@cloudscape-design/components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Forms from './forms';
 import { addData } from '../utils/data';
 import useMyStore from '../store/useStore';
 import { getStoreNamesFromConfigColumns } from '../utils/store';
 import AddMultipleItems from './add-multiple-items';
 import { INPUT_TYPES } from '../lib/forms';
+import { toOptions } from '../utils/misc';
 
 export default function AddItemModal({
   ModalComponent,
@@ -22,7 +23,11 @@ export default function AddItemModal({
 }) {
   const storeValues = useMyStore((state) => {
     const storeNames = getStoreNamesFromConfigColumns(config);
-    const result = { pb: state.pb, addItemToStore: state.addItemToStore };
+    const result = {
+      pb: state.pb,
+      addItemToStore: state.addItemToStore,
+      fetchPbRecordList: state.fetchPbRecordList,
+    };
     storeNames.forEach((store) => {
       result[store] = state[store];
     });
@@ -31,6 +36,10 @@ export default function AddItemModal({
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedId, setSelectedId] = useState(INPUT_TYPES.SINGLE);
+
+  useEffect(() => {
+    setLoading(false);
+  }, []);
 
   const onSave = async () => {
     setLoading(true);
@@ -49,7 +58,32 @@ export default function AddItemModal({
         setLoading(false);
       }
     } else {
-      console.log(data);
+      const promises = data.map((el) => {
+        const dataCopy = { ...el };
+        // remove id field used to identify rows
+        delete dataCopy.id;
+        config.columns.forEach((column) => {
+          if (column.selectType) {
+            dataCopy[column.id] = toOptions(dataCopy[column.id]);
+          }
+        });
+        return addData(storeValues.pb, config, {
+          stores: storeValues,
+          newData: dataCopy,
+          addItemToStore: storeValues.addItemToStore,
+        });
+      });
+      Promise.all(promises)
+        .then(async () => {
+          await setData(null);
+          await setLoading(false);
+          await storeValues.fetchPbRecordList(config);
+          await setVisible(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoading(false);
+        });
     }
   };
 
