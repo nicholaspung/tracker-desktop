@@ -125,7 +125,7 @@ export default function AddItemModal({
         ) : null}
         {selectedId === INPUT_TYPES.MULTIPLE ? (
           <AddMultipleItems
-            type={INPUT_TYPES.MANUAL}
+            type={INPUT_TYPES.MULTIPLE}
             label="Items"
             config={config}
             setDataUpstream={setData}

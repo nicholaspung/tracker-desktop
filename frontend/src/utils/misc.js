@@ -1,6 +1,7 @@
 export const ALL_OPTION = { label: 'all', value: 'all' };
 
 export const toOptions = (data, field) => {
+  if (!data) return undefined;
   if (Array.isArray(data) && field) {
     return data.map((el) => ({ label: el[field], value: el[field] }));
   }

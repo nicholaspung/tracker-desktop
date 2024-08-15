@@ -92,8 +92,11 @@ const transformDataToPbRecordData = (config, data, stores) => {
     }
     if (column.store && dataCopy[column.id]) {
       if (column.selectType === SELECT_TYPES.SINGLE) {
+        const value = column.autoSuggestFieldIds
+          ? data[column.id]
+          : dataCopy[column.id].value;
         const record = stores[column.store].find(
-          (el) => el[column.storeField] === dataCopy[column.id].value,
+          (el) => el[column.storeField] === value,
         );
         dataCopy[column.expandFields] = record.id;
       } else {
