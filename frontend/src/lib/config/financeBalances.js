@@ -83,6 +83,7 @@ export const CONFIG_FINANCES_BALANCE_TYPE = {
 };
 
 export const CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY = {
+  label: 'finance balances',
   collection: COLLECTION_NAMES.FINANCES_BALANCE,
   columns: [
     { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR },

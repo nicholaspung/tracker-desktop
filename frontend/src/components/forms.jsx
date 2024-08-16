@@ -16,6 +16,10 @@ import {
 import useMyStore from '../store/useStore';
 import { getStoreValuesFromConfig } from '../utils/store';
 import { toOptions } from '../utils/misc';
+import {
+  cloudscapeDateToCorrectDateValue,
+  pbDateToDisplay,
+} from '../utils/date';
 
 export default function Forms({ config, defaultData, setDataUpstream }) {
   const initialData = getInitialDataFormat(config.columns, defaultData);
@@ -40,6 +44,9 @@ export default function Forms({ config, defaultData, setDataUpstream }) {
       const result = { ...prev, [el.id]: detailValue };
       if (changeFunc === 'onSelect') {
         result[el.id] = detailValue.value;
+      }
+      if (changeFunc === 'onDate') {
+        result[el.id] = cloudscapeDateToCorrectDateValue(detailValue);
       }
       if (detailValue.tags && detailValue.filteringTags) {
         result[el.id] = detailValue.value;
@@ -77,8 +84,8 @@ export default function Forms({ config, defaultData, setDataUpstream }) {
                   selectedDate ? `, selected date is ${selectedDate}` : ''
                 }`
               }
-              onChange={({ detail }) => onChange(el, detail, 'value')}
-              value={data[el.id]}
+              onChange={({ detail }) => onChange(el, detail, 'value', 'onDate')}
+              value={pbDateToDisplay(data[el.id])}
             />
           </FormField>
         );

@@ -4,6 +4,7 @@ import {
   findLatestDate,
   isCurrentMonth,
   isCurrentYear,
+  pbDateToDisplay,
 } from './date';
 import { ALL_OPTION } from './misc';
 
@@ -103,23 +104,24 @@ export const barChartDataAccordingToFields = (
 };
 
 const dateFilterFunction = (el, filterOptions, dateField = 'date') => {
+  const value = pbDateToDisplay(el[dateField]);
   if (filterOptions.timeFrame) {
     if (filterOptions.timeFilter.value === TIME_FILTERS.MONTH) {
       return isCurrentMonth(
-        new Date(el[dateField]),
+        new Date(value),
         new Date(filterOptions.timeFrame[TIME_FILTERS.MONTH]),
       );
     }
     if (filterOptions.timeFilter.value === TIME_FILTERS.YEAR) {
       return isCurrentYear(
-        new Date(el[dateField]),
+        new Date(value),
         new Date(String(filterOptions.timeFrame[TIME_FILTERS.YEAR].value)),
       );
     }
     return (
-      new Date(el[dateField]) >=
+      new Date(value) >=
         new Date(filterOptions.timeFrame[TIME_FILTERS.DATE_RANGE].startDate) &&
-      new Date(el[dateField]) <=
+      new Date(value) <=
         new Date(filterOptions.timeFrame[TIME_FILTERS.DATE_RANGE].endDate)
     );
   }
@@ -152,14 +154,10 @@ export const filterDataAccordingtoFilterOptions = (
           if (selection.value === ALL_OPTION.value) {
             continue;
           }
-          try {
-            const parsedData = JSON.stringify(el[id]);
-            if (!parsedData.includes(selection.value)) {
-              override = true;
-              break;
-            }
-          } catch (err) {
-            throw new Error('failed in parsing JSON data');
+          const value = el[id];
+          if (!value === selection.value) {
+            override = true;
+            break;
           }
         }
         if (filter === SUMMARY_FILTERS.SELECTION_MULTIPLE) {
@@ -167,11 +165,11 @@ export const filterDataAccordingtoFilterOptions = (
             continue;
           }
           try {
-            const parsedData = JSON.stringify(el[id]);
+            const value = el[id];
             if (Array.isArray(selection)) {
               let arrayOverride = true; // start off assuming it will be false
               for (let j = 0; j < selection.length; j += 1) {
-                if (parsedData.includes(selection[j].value)) {
+                if (value === selection[j].value) {
                   arrayOverride = false;
                   break;
                 }

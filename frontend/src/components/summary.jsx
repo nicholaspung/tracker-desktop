@@ -79,7 +79,9 @@ export default function Summary({ config }) {
 
   return (
     <Container
-      header={<Header>Summary of Finance Logs according to filters</Header>}
+      header={
+        <Header>{`Summary of ${config.label} according to filters`}</Header>
+      }
     >
       <SpaceBetween size="xs" direction="vertical">
         <SpaceBetween size="xs" direction="horizontal">

@@ -115,7 +115,7 @@ export function TimeFilter({
           <DateRangePicker
             dateOnly
             rangeSelectorMode="absolute-only"
-            absoluteFormat="long-localized"
+            absoluteFormat="iso"
             value={timeFrame[TIME_FILTERS.DATE_RANGE]}
             onChange={({ detail }) =>
               setTimeFrame((prev) => ({
@@ -137,6 +137,7 @@ export function TimeFilter({
               isDateEnabled(date, {
                 year: firstYear,
                 month: firstMonth,
+                day: firstDay,
               })
             }
           />

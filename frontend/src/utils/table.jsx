@@ -12,6 +12,7 @@ import { convertToDollar, convertToTitleCase } from './display';
 import { toOptions } from './misc';
 import { SELECT_BOOL_OPTIONS } from '../lib/forms';
 import { getAutoSuggestDataFromColumn, getStoreValueFromConfig } from './forms';
+import { cloudscapeDateToCorrectDateValue, pbDateToDisplay } from './date';
 
 /**
  *
@@ -55,12 +56,12 @@ export const fieldEditorSelector = ({
   storeValue,
 }) => {
   if (column.type === TABLE_DISPLAY_TYPES.DATE) {
-    // note: when loading, this component portion won't render nicely because
-    // datepicker component won't allow expandToViewport to work correctly
     return (
       <DatePicker
-        onChange={({ detail }) => setValue(detail.value, column)}
-        value={currentValue}
+        onChange={({ detail }) =>
+          setValue(cloudscapeDateToCorrectDateValue(detail.value), column)
+        }
+        value={pbDateToDisplay(currentValue)}
         openCalendarAriaLabel={(selectedDate) =>
           `Choose date${
             selectedDate ? `, selected date is ${selectedDate}` : ''
@@ -72,6 +73,7 @@ export const fieldEditorSelector = ({
           todayAriaLabel: 'Today',
         }}
         placeholder="YYYY/MM/DD"
+        expandToViewport
       />
     );
   }
@@ -182,20 +184,14 @@ export const fieldEditorSelector = ({
 const columnCell = (el, item) => {
   switch (el.type) {
     case TABLE_DISPLAY_TYPES.DATE:
-      const dataDate = new Date(item[el.id]);
-      const year = dataDate.getFullYear();
-      const month = String(dataDate.getMonth() + 1).padStart(2, '0');
-      const day = String(dataDate.getUTCDate()).padStart(2, '0');
-      return `${year}-${String(month).length === 1 ? `0${month}` : month}-${
-        String(day).length === 1 ? `0${day}` : day
-      }`;
+      return pbDateToDisplay(item[el.id]);
     case TABLE_DISPLAY_TYPES.DOLLAR:
       return convertToDollar(item[el.id]);
     case TABLE_DISPLAY_TYPES.BADGE:
       if (Array.isArray(item[el.id])) {
         return (
           <SpaceBetween size="xs" direction="horizontal">
-            {item[el.id].map((ele) => (
+            {item[el.id].sort().map((ele) => (
               <Badge key={ele}>{ele}</Badge>
             ))}
           </SpaceBetween>

@@ -57,6 +57,7 @@ export const CONFIG_FINANCES_TAG = {
 };
 
 export const CONFIG_CUSTOM_FINANCE_SUMMARY = {
+  label: 'finance logs',
   collection: COLLECTION_NAMES.FINANCES_LOG,
   columns: [
     { id: 'category', type: TABLE_DISPLAY_TYPES.TEXT },

@@ -1,7 +1,7 @@
 const isDate = (arg) => arg instanceof Date;
 
 export const dateToDatePickerMonth = (dateObj = new Date()) => {
-  if (!isDate) {
+  if (!isDate(dateObj)) {
     throw new Error('argument is not an instance of Date()');
   }
 
@@ -31,7 +31,7 @@ export const isCurrentYear = (dateObj2, dateObj1 = new Date()) => {
 };
 
 export const dateToDatePicker = (dateObj = new Date()) => {
-  if (!isDate) {
+  if (!isDate(dateObj)) {
     throw new Error('argument is not an instance of Date()');
   }
 
@@ -56,17 +56,17 @@ export const getFirstMonthAndYearFromData = (data, dateField) => {
   if (!data.length) {
     const now = new Date();
     return {
-      firstYear: now.getUTCFullYear(),
-      firstMonth: now.getUTCMonth() + 1,
-      firstDay: now.getUTCDate(),
+      firstYear: now.getFullYear(),
+      firstMonth: now.getMonth() + 1,
+      firstDay: now.getDate(),
     };
   }
   const first = data[data.length - 1][dateField];
   const firstDate = new Date(first);
   return {
-    firstYear: firstDate.getUTCFullYear(),
-    firstMonth: firstDate.getUTCMonth() + 1,
-    firstDay: firstDate.getUTCDate(),
+    firstYear: firstDate.getFullYear(),
+    firstMonth: firstDate.getMonth() + 1,
+    firstDay: firstDate.getDate(),
   };
 };
 
@@ -81,7 +81,8 @@ export const isDateEnabled = (date, { year, month, day }) => {
   if (day) {
     dateString += `-${day}`;
   }
-  return date <= new Date() && date >= new Date(dateString);
+  const dataDate = new Date(dateToDatePicker(date));
+  return dataDate <= new Date() && dataDate >= new Date(dateString);
 };
 
 export const isValidRange = ({ startDate, endDate, year, month, day }) => {
@@ -136,3 +137,31 @@ export function findLatestDate(dates) {
   // Return the first (latest) date
   return sortedDates[0];
 }
+
+export const pbDateToDisplay = (value) => {
+  const dataDate = new Date(value);
+  const year = dataDate.getFullYear();
+  const month = String(dataDate.getMonth() + 1).padStart(2, '0');
+  const day = String(dataDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+export const cloudscapeDateToCorrectDateValue = (value, isFilter = false) => {
+  const now = new Date();
+  if (!value) {
+    return now;
+  }
+  const hour = now.getHours();
+  const min = now.getMinutes();
+  let dataDate;
+  if (isFilter) {
+    dataDate = new Date(...value.split(' ')[0].split('-'));
+  } else {
+    dataDate = new Date(...value.split('-'));
+  }
+  const year = dataDate.getFullYear();
+  const month = dataDate.getMonth();
+  const day = dataDate.getDate();
+  const result = new Date(year, Number(month) - 1, day, hour, min);
+  return result;
+};

@@ -1,5 +1,5 @@
 import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../lib/display';
-import { dateToDatePicker } from './date';
+import { cloudscapeDateToCorrectDateValue } from './date';
 import { toOptions, toUniqueStoreName } from './misc';
 
 export const getInitialDataFormat = (columns, defaultData) =>
@@ -7,7 +7,7 @@ export const getInitialDataFormat = (columns, defaultData) =>
     (acc, curr) => {
       let value;
       const DEFAULT_VALUES = {
-        [TABLE_DISPLAY_TYPES.DATE]: dateToDatePicker(),
+        [TABLE_DISPLAY_TYPES.DATE]: cloudscapeDateToCorrectDateValue(),
         [TABLE_DISPLAY_TYPES.BADGE]:
           curr.selectType === SELECT_TYPES.MULTIPLE ? [] : '',
         [TABLE_DISPLAY_TYPES.DOLLAR]: '',

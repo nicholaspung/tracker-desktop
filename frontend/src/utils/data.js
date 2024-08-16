@@ -84,7 +84,7 @@ const transformDataToPbRecordData = (config, data, stores) => {
       const dataDate = new Date(dataCopy[column.id]);
       const year = dataDate.getFullYear();
       const month = dataDate.getMonth();
-      const day = dataDate.getUTCDate();
+      const day = dataDate.getDate();
       const now = new Date();
       const hour = now.getHours();
       const min = now.getMinutes();
