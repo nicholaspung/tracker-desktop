@@ -14,6 +14,7 @@ import {
   CONFIG_FINANCES_BALANCE_OWNER,
   CONFIG_FINANCES_BALANCE_TYPE,
   CONFIG_FINANCES_CATEGORY,
+  CONFIG_FINANCES_FILES,
   CONFIG_FINANCES_LOG,
   CONFIG_FINANCES_TAG,
 } from '../lib/config';
@@ -48,6 +49,11 @@ export default function WealthPage() {
             label="Add category"
           />
           <AddItemButtonModal config={CONFIG_FINANCES_TAG} label="Add tag" />
+          <AddItemButtonModal
+            config={CONFIG_FINANCES_FILES}
+            label="Add files"
+            showMultiple={false}
+          />
         </SpaceBetween>
         <hr />
         <SpaceBetween size="xs" direction="vertical" alignItems="center">

@@ -1,11 +1,12 @@
 import {
   Autosuggest,
   DatePicker,
+  FileUpload,
   FormField,
   Input,
 } from '@cloudscape-design/components';
 import { useState } from 'react';
-import { TABLE_DISPLAY_TYPES } from '../lib/display';
+import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../lib/display';
 import { convertToTitleCase } from '../utils/display';
 import SelectWithData from './forms/selectWithData';
 import {
@@ -129,6 +130,29 @@ export default function Forms({ config, defaultData, setDataUpstream }) {
             value={data[el.id]}
             onChange={onChange}
           />
+        );
+      case TABLE_DISPLAY_TYPES.FILE:
+        return (
+          <FormField key={el.id} label={convertToTitleCase(el.id)}>
+            <FileUpload
+              onChange={({ detail }) => onChange(el, detail, 'value')}
+              value={data[el.id]}
+              i18nStrings={{
+                uploadButtonText: (e) => (e ? 'Choose files' : 'Choose file'),
+                dropzoneText: (e) =>
+                  e ? 'Drop files to upload' : 'Drop file to upload',
+                removeFileAriaLabel: (e) => `Remove file ${e + 1}`,
+                limitShowFewer: 'Show fewer files',
+                limitShowMore: 'Show more files',
+                errorIconAriaLabel: 'Error',
+              }}
+              tokenLimit={3}
+              constraintText={`File extensions accepted: ${el.fileTypes.join(
+                ', ',
+              )}`}
+              multiple={el.selectType === SELECT_TYPES.MULTIPLE}
+            />
+          </FormField>
         );
       default:
         return null;

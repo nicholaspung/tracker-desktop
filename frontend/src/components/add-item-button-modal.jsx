@@ -3,7 +3,7 @@ import { memo } from 'react';
 import useModal from '../hooks/useModal';
 import AddItemModal from './add-item-modal';
 
-function AddItemButtonModal({ config, label }) {
+function AddItemButtonModal({ config, label, showMultiple = true }) {
   const { ModalComponent, setVisible } = useModal();
 
   return (
@@ -14,6 +14,7 @@ function AddItemButtonModal({ config, label }) {
         setVisible={setVisible}
         label={label}
         config={config}
+        showMultiple={showMultiple}
       />
     </>
   );

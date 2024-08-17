@@ -188,6 +188,7 @@ const columnCell = (el, item) => {
     case TABLE_DISPLAY_TYPES.DOLLAR:
       return convertToDollar(item[el.id]);
     case TABLE_DISPLAY_TYPES.BADGE:
+    case TABLE_DISPLAY_TYPES.FILE:
       if (Array.isArray(item[el.id])) {
         return (
           <SpaceBetween size="xs" direction="horizontal">

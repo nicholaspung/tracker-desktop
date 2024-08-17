@@ -13,6 +13,7 @@ export const getInitialDataFormat = (columns, defaultData) =>
         [TABLE_DISPLAY_TYPES.DOLLAR]: '',
         [TABLE_DISPLAY_TYPES.TEXT]: '',
         [TABLE_DISPLAY_TYPES.ID]: crypto.randomUUID(),
+        [TABLE_DISPLAY_TYPES.FILE]: [],
       };
       const returnData = (column, data, displayType) =>
         data && data[column.id] ? data[column.id] : DEFAULT_VALUES[displayType];
@@ -32,6 +33,9 @@ export const getInitialDataFormat = (columns, defaultData) =>
           break;
         case TABLE_DISPLAY_TYPES.ID:
           value = returnData(curr, defaultData, TABLE_DISPLAY_TYPES.ID);
+          break;
+        case TABLE_DISPLAY_TYPES.FILE:
+          value = returnData(curr, defaultData, TABLE_DISPLAY_TYPES.FILE);
           break;
         case TABLE_DISPLAY_TYPES.DOLLAR:
         case TABLE_DISPLAY_TYPES.TEXT:

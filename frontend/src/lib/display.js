@@ -6,6 +6,7 @@ export const TABLE_DISPLAY_TYPES = {
   CHECKBOX: 'checkbox',
   BOOL: 'bool',
   ID: 'id',
+  FILE: 'file',
 };
 
 export const SELECT_TYPES = {

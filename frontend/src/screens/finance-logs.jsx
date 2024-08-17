@@ -4,6 +4,7 @@ import TableList from '../components/table-list';
 import {
   CONFIG_CUSTOM_FINANCE_SUMMARY,
   CONFIG_FINANCES_CATEGORY,
+  CONFIG_FINANCES_FILES,
   CONFIG_FINANCES_LOG,
   CONFIG_FINANCES_TAG,
 } from '../lib/config';
@@ -16,6 +17,7 @@ export default function FinanceLogs() {
     CONFIG_FINANCES_LOG,
     CONFIG_FINANCES_CATEGORY,
     CONFIG_FINANCES_TAG,
+    CONFIG_FINANCES_FILES,
   ];
   const { fetchPbRecordList } = useMyStore((state) => ({
     fetchPbRecordList: state.fetchPbRecordList,
@@ -79,6 +81,20 @@ export default function FinanceLogs() {
                 selectionType={SELECT_TYPES.SINGLE}
                 isLoading={queries[2].isLoading}
                 refetch={queries[2].refetch}
+              />
+            ),
+          },
+          {
+            label: 'Files',
+            id: 'files',
+            content: (
+              <TableList
+                config={configs[3]}
+                label="All Finance Files"
+                variant="embedded"
+                selectionType={SELECT_TYPES.SINGLE}
+                isLoading={queries[3].isLoading}
+                refetch={queries[3].refetch}
               />
             ),
           },

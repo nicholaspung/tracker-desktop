@@ -20,6 +20,7 @@ export default function AddItemModal({
   label,
   setVisible,
   config,
+  showMultiple,
 }) {
   const storeValues = useMyStore((state) => {
     const storeNames = getStoreNamesFromConfigColumns(config);
@@ -87,6 +88,12 @@ export default function AddItemModal({
     }
   };
 
+  const OPTIONS = [{ text: 'Add single', id: INPUT_TYPES.SINGLE }];
+  if (showMultiple) {
+    OPTIONS.push({ text: 'Add multiple', id: INPUT_TYPES.MULTIPLE });
+    OPTIONS.push({ text: 'Import multiple', id: INPUT_TYPES.IMPORT });
+  }
+
   return (
     <ModalComponent
       size={selectedId === INPUT_TYPES.SINGLE ? 'large' : 'max'}
@@ -97,11 +104,7 @@ export default function AddItemModal({
               selectedId={selectedId}
               onChange={({ detail }) => setSelectedId(detail.selectedId)}
               label="Input method"
-              options={[
-                { text: 'Add single', id: INPUT_TYPES.SINGLE },
-                { text: 'Add multiple', id: INPUT_TYPES.MULTIPLE },
-                { text: 'Import multiple', id: INPUT_TYPES.IMPORT },
-              ]}
+              options={OPTIONS}
             />
           }
         >
@@ -123,7 +126,7 @@ export default function AddItemModal({
         {selectedId === INPUT_TYPES.SINGLE ? (
           <Forms config={config} setDataUpstream={setData} />
         ) : null}
-        {selectedId === INPUT_TYPES.MULTIPLE ? (
+        {showMultiple && selectedId === INPUT_TYPES.MULTIPLE ? (
           <AddMultipleItems
             type={INPUT_TYPES.MULTIPLE}
             label="Items"
@@ -131,7 +134,7 @@ export default function AddItemModal({
             setDataUpstream={setData}
           />
         ) : null}
-        {selectedId === INPUT_TYPES.IMPORT ? (
+        {showMultiple && selectedId === INPUT_TYPES.IMPORT ? (
           <AddMultipleItems
             type={INPUT_TYPES.IMPORT}
             label="Imported items"

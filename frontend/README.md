@@ -4,6 +4,7 @@
 - add a component to analyzed the data to show trends, ie sum of how much money spent per month, sum of how much money brought in per month, sum of latest balance according to month for length of time 
 - add line chart to showcase finance balance trends
 - add a time frame for all
+- fix summary for sums, in finance balances summary, it's not filtering the account owner
 
 LATER
 
@@ -19,3 +20,4 @@ DONE
 - display date in local time, even though date is saved in UTC [DONE 8/15/24]
 - sort multiple selection badges on display [DONE 8/15/24]
 - filter start and end dates are broken [DONE 8/15/24]
+- add files [DONE 8/16/24]

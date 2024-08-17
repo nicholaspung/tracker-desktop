@@ -56,6 +56,23 @@ export const CONFIG_FINANCES_TAG = {
   columns: [{ id: 'tag', type: TABLE_DISPLAY_TYPES.TEXT }],
 };
 
+export const CONFIG_FINANCES_FILES = {
+  collection: COLLECTION_NAMES.FINANCES_FILES,
+  sort: '-date_uploaded',
+  columns: [
+    {
+      id: 'date_uploaded',
+      type: TABLE_DISPLAY_TYPES.DATE,
+    },
+    {
+      id: 'attachments',
+      type: TABLE_DISPLAY_TYPES.FILE,
+      selectType: SELECT_TYPES.MULTIPLE,
+      fileTypes: ['all'],
+    },
+  ],
+};
+
 export const CONFIG_CUSTOM_FINANCE_SUMMARY = {
   label: 'finance logs',
   collection: COLLECTION_NAMES.FINANCES_LOG,

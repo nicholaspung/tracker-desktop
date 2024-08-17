@@ -75,6 +75,13 @@ const useMyStore = create((set) => ({
    * }}
    */
   [COLLECTION_NAMES.FINANCES_BALANCE_TYPE]: [],
+  /**
+   * @type {{
+   *  date_uploaded: string,
+   *  attachments: string[]
+   * }}
+   */
+  [COLLECTION_NAMES.FINANCES_FILES]: [],
   setDataInStore: (store, data) =>
     set((state) => {
       if (!Object.keys(state).includes(store)) {
