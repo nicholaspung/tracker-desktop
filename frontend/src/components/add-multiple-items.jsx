@@ -117,7 +117,7 @@ export default function AddMultipleItems({
         Object.keys(parsedValue).forEach((key) => {
           if (key === column.id) {
             itemCopy[column.id] = parsedValue[key];
-          } else if (parsedValue[key].includes(', ')) {
+          } else if (parsedValue[key] && parsedValue[key].includes(', ')) {
             const newTagsValue = parsedValue[key]
               .split(', ')
               .filter((ele) => ele)

@@ -13,7 +13,11 @@ export const transformer = (el, config) => {
     const { id } = ele;
     if (!transform[id]) {
       if (ele.expandPath) {
-        transform[id] = jmespath.search(el, ele.expandPath);
+        const value = jmespath.search(el, ele.expandPath);
+        if (Array.isArray(value)) {
+          value.sort();
+        }
+        transform[id] = value;
       } else {
         transform[id] = el[id];
       }
@@ -92,13 +96,18 @@ const transformDataToPbRecordData = (config, data, stores) => {
     }
     if (column.store && dataCopy[column.id]) {
       if (column.selectType === SELECT_TYPES.SINGLE) {
-        const value = column.autoSuggestFieldIds
-          ? data[column.id]
-          : dataCopy[column.id].value;
+        let value;
+        if (typeof dataCopy[column.id] === 'object') {
+          value = dataCopy[column.id].value;
+        } else {
+          value = dataCopy[column.id];
+        }
         const record = stores[column.store].find(
           (el) => el[column.storeField] === value,
         );
         dataCopy[column.expandFields] = record.id;
+      } else if (!dataCopy[column.id]) {
+        dataCopy[column.expandFields] = [];
       } else {
         dataCopy[column.expandFields] = dataCopy[column.id].map((dataValue) => {
           const record = stores[column.store].find(

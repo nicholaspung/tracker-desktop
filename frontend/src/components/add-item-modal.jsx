@@ -74,17 +74,16 @@ export default function AddItemModal({
           addItemToStore: storeValues.addItemToStore,
         });
       });
-      Promise.all(promises)
-        .then(async () => {
-          await setData(null);
-          await setLoading(false);
-          await storeValues.fetchPbRecordList(config);
-          await setVisible(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          setLoading(false);
-        });
+      try {
+        await Promise.allSettled(promises);
+        await setData(null);
+        await setLoading(false);
+        await storeValues.fetchPbRecordList(config);
+        await setVisible(false);
+      } catch (err) {
+        console.error(err);
+        setLoading(false);
+      }
     }
   };
 

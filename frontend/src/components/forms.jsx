@@ -107,7 +107,6 @@ export default function Forms({ config, defaultData, setDataUpstream }) {
         return (
           <FormField key={el.id} label={convertToTitleCase(el.id)}>
             <Autosuggest
-              autoFocus
               expandToViewport
               onChange={({ detail }) => onChange(el, detail, 'value')}
               onSelect={({ detail }) =>

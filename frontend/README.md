@@ -1,12 +1,17 @@
 # TODOS
 
-- showcase config to summary and think about how to save the config
 - add a component to analyzed the data to show trends, ie sum of how much money spent per month, sum of how much money brought in per month, sum of latest balance according to month for length of time 
 - add line chart to showcase finance balance trends
 - add a time frame for all
 - fix summary for sums, in finance balances summary, it's not filtering the account owner
+- add "required value" display
+- add error flashbar if there's an error
+- add flashbar component for overall app, and make it global
 
 LATER
+
+- showcase config to summary and think about how to save the config
+- find out if you can disable scroll in background if modal is open
 
 DONE
 
@@ -21,3 +26,9 @@ DONE
 - sort multiple selection badges on display [DONE 8/15/24]
 - filter start and end dates are broken [DONE 8/15/24]
 - add files [DONE 8/16/24]
+- fix and figure out why finance balances multiple add isn't working [DONE 8/17/24]
+- fix and figure out why import data doesn't import all data before finishing [DONE 8/17/24]
+- on edit, find a way to make the autosuggest not automatically pop up [DONE 8/17/24]
+- sort tags and multiple items when loaded instead of later [DONE 8/17/24]
+- sometimes when using the add multiple items using the keyboard and choosing an autosuggest field via keyboard, it returns the stringified value, rather than autocompleting [DONE 8/17/24]
+- fix adding items with empty values [DONE 8/17/24]
