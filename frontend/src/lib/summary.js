@@ -1,4 +1,5 @@
 export const TIME_FILTERS = {
+  ALL: 'All',
   YEAR: 'Year',
   MONTH: 'Month',
   DATE_RANGE: 'Date range',

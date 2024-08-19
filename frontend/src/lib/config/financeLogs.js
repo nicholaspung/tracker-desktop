@@ -113,7 +113,7 @@ export const CONFIG_CUSTOM_FINANCE_SUMMARY = {
           label: 'Category sums',
           analysis: [SUMMARY_ANALYSIS.SUM],
           sumField: 'amount',
-          groupField: 'category',
+          groupFields: ['category'],
           analysisDisplay: SUMMARY_ANALYSIS_DISPLAY.POSITIVE_NEGATIVE_TOTAL,
           analysisDisplayFields: [
             {
@@ -136,7 +136,7 @@ export const CONFIG_CUSTOM_FINANCE_SUMMARY = {
           popoverValueField: 'amount',
           analysis: [SUMMARY_ANALYSIS.SUM],
           sumField: 'amount',
-          groupField: 'category',
+          groupFields: ['category'],
         },
       ],
     },

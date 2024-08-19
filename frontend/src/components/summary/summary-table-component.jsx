@@ -20,7 +20,7 @@ export function SummaryTableComponent({
   analysisDisplay,
   analysisDisplayFields,
   sumField,
-  groupField,
+  groupFields,
   latestFields,
 }) {
   let total;
@@ -33,7 +33,11 @@ export function SummaryTableComponent({
   }
 
   if (analysis.includes(SUMMARY_ANALYSIS.SUM)) {
-    analyzedData = sumDataAccordingToFields(analyzedData, sumField, groupField);
+    analyzedData = sumDataAccordingToFields(
+      analyzedData,
+      sumField,
+      groupFields,
+    );
     const totalSum = totalSumOfDataAccordingToField(analyzedData, sumField);
     total = totalSum.total;
     positive = totalSum.positive;

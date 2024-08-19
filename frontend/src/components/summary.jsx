@@ -178,7 +178,7 @@ export default function Summary({ config }) {
                   analysisDisplay={component.analysisDisplay}
                   analysisDisplayFields={component.analysisDisplayFields}
                   sumField={component.sumField}
-                  groupField={component.groupField}
+                  groupFields={component.groupFields}
                   latestFields={component.latestFields}
                   key={`${i}${component.piece}`}
                 />

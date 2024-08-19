@@ -19,7 +19,7 @@ export default function BarChartComponent({
   filterOptions,
   analysis,
   sumField,
-  groupField,
+  groupFields,
   latestFields,
 }) {
   let analyzedData = data;
@@ -29,7 +29,11 @@ export default function BarChartComponent({
   }
 
   if (analysis.includes(SUMMARY_ANALYSIS.SUM)) {
-    analyzedData = sumDataAccordingToFields(data, sumField, groupField);
+    analyzedData = sumDataAccordingToFields(
+      analyzedData,
+      sumField,
+      groupFields,
+    );
   }
 
   const barChartSeriesData = barChartDataAccordingToFields(

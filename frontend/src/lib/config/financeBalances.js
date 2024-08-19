@@ -133,7 +133,7 @@ export const CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY = {
           label: 'Account type sums',
           analysis: [SUMMARY_ANALYSIS.SUM, SUMMARY_ANALYSIS.LATEST],
           sumField: 'amount',
-          groupField: 'account_type',
+          groupFields: ['account_type', 'account_owner'],
           latestFields: ['account_name', 'account_type', 'account_owner'],
           analysisDisplay: SUMMARY_ANALYSIS_DISPLAY.POSITIVE_NEGATIVE_TOTAL,
           analysisDisplayFields: [
@@ -160,7 +160,8 @@ export const CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY = {
           popoverValueField: 'amount',
           analysis: [SUMMARY_ANALYSIS.SUM, SUMMARY_ANALYSIS.LATEST],
           sumField: 'amount',
-          groupField: 'account_type',
+          groupFields: ['account_type', 'account_owner'],
+          latestFields: ['account_name', 'account_type', 'account_owner'],
         },
       ],
     },

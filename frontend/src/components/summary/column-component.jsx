@@ -25,7 +25,7 @@ export function ColumnComponent({
               analysisDisplay={piece.analysisDisplay}
               analysisDisplayFields={piece.analysisDisplayFields}
               sumField={piece.sumField}
-              groupField={piece.groupField}
+              groupFields={piece.groupFields}
               latestFields={piece.latestFields}
               key={`${i}${piece.piece}`}
             />
@@ -43,7 +43,7 @@ export function ColumnComponent({
               filterOptions={filterOptions}
               analysis={piece.analysis}
               sumField={piece.sumField}
-              groupField={piece.groupField}
+              groupFields={piece.groupFields}
               latestFields={piece.latestFields}
               key={`${i}${piece.piece}`}
             />

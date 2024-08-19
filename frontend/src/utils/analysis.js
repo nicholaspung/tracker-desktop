@@ -9,25 +9,27 @@ import {
 import { ALL_OPTION } from './misc';
 
 // data: [{normal pb entry}]
-export const sumDataAccordingToFields = (data, sumField, groupField) => {
-  const groupFieldObj = {};
+export const sumDataAccordingToFields = (data, sumField, groupFields) => {
+  const groupFieldsObj = {};
 
   data.forEach((el) => {
-    const groupValue = el[groupField];
+    const groupFieldsName = groupFields.map((field) => el[field]).join('-');
     const sumValue = el[sumField];
 
-    if (!groupFieldObj[groupValue]) {
-      groupFieldObj[groupValue] = {
+    if (!groupFieldsObj[groupFieldsName]) {
+      groupFieldsObj[groupFieldsName] = {
         ...el,
         [sumField]: sumValue,
-        [groupField]: groupValue,
       };
+      groupFields.forEach((field) => {
+        groupFieldsObj[groupFieldsName][field] = el[field];
+      });
     } else {
-      groupFieldObj[groupValue][sumField] += sumValue;
+      groupFieldsObj[groupFieldsName][sumField] += sumValue;
     }
   });
 
-  return Object.keys(groupFieldObj).map((el) => groupFieldObj[el]);
+  return Object.keys(groupFieldsObj).map((el) => groupFieldsObj[el]);
 };
 
 export const latestDataAccordingToField = (
@@ -84,7 +86,9 @@ export const barChartDataAccordingToFields = (
 ) => {
   let xDisplay = '';
   if (timeFrame) {
-    if (timeFilter.value === TIME_FILTERS.MONTH) {
+    if (timeFilter.value === TIME_FILTERS.ALL) {
+      xDisplay = 'All';
+    } else if (timeFilter.value === TIME_FILTERS.MONTH) {
       xDisplay = timeFrame[TIME_FILTERS.MONTH];
     } else if (timeFilter.value === TIME_FILTERS.YEAR) {
       xDisplay = String(timeFrame[TIME_FILTERS.YEAR].value);
@@ -106,6 +110,9 @@ export const barChartDataAccordingToFields = (
 const dateFilterFunction = (el, filterOptions, dateField = 'date') => {
   const value = pbDateToDisplay(el[dateField]);
   if (filterOptions.timeFrame) {
+    if (filterOptions.timeFilter.value === TIME_FILTERS.ALL) {
+      return true;
+    }
     if (filterOptions.timeFilter.value === TIME_FILTERS.MONTH) {
       return isCurrentMonth(
         new Date(value),
