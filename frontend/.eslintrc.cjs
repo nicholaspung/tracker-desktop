@@ -36,6 +36,7 @@ module.exports = {
     'no-case-declarations': 'off',
     'no-continue': 'off',
     'react/no-array-index-key': 'off',
+    'no-await-in-loop': 'warn',
     indent: 'off',
   },
 };

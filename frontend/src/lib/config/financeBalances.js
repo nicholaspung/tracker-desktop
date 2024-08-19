@@ -15,8 +15,8 @@ export const CONFIG_FINANCES_BALANCE = {
   collection: COLLECTION_NAMES.FINANCES_BALANCE,
   sort: '-date',
   columns: [
-    { id: 'date', type: TABLE_DISPLAY_TYPES.DATE },
-    { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR },
+    { id: 'date', type: TABLE_DISPLAY_TYPES.DATE, required: true },
+    { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR, required: true },
     {
       id: 'account_name',
       type: TABLE_DISPLAY_TYPES.TEXT,
@@ -36,6 +36,7 @@ export const CONFIG_FINANCES_BALANCE = {
       selectType: SELECT_TYPES.SINGLE,
       store: COLLECTION_NAMES.FINANCES_BALANCE_TYPE,
       storeField: 'account_type',
+      required: true,
     },
     {
       id: 'account_owner',
@@ -52,13 +53,13 @@ export const CONFIG_FINANCES_BALANCE = {
 export const CONFIG_FINANCES_BALANCE_ACCOUNT_NAME = {
   collection: COLLECTION_NAMES.FINANCES_BALANCE_ACCOUNT_NAME,
   sort: 'name',
-  columns: [{ id: 'name', type: TABLE_DISPLAY_TYPES.TEXT }],
+  columns: [{ id: 'name', type: TABLE_DISPLAY_TYPES.TEXT, required: true }],
 };
 
 export const CONFIG_FINANCES_BALANCE_OWNER = {
   collection: COLLECTION_NAMES.FINANCES_BALANCE_OWNER,
   sort: 'name',
-  columns: [{ id: 'name', type: TABLE_DISPLAY_TYPES.TEXT }],
+  columns: [{ id: 'name', type: TABLE_DISPLAY_TYPES.TEXT, required: true }],
 };
 
 export const CONFIG_FINANCES_BALANCE_TYPE = {
@@ -69,6 +70,7 @@ export const CONFIG_FINANCES_BALANCE_TYPE = {
       id: 'account_type',
       type: TABLE_DISPLAY_TYPES.TEXT,
       autoSuggestFieldIds: ['category'],
+      required: true,
     },
     {
       id: 'category',
@@ -143,7 +145,10 @@ export const CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY = {
               type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.NEGATIVE,
               label: 'Liabilities: ',
             },
-            { type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.TOTAL, label: 'Total: ' },
+            {
+              type: SUMMARY_ANALYSIS_DISPLAY_FIELDS.TOTAL,
+              label: 'Net worth: ',
+            },
           ],
         },
         {

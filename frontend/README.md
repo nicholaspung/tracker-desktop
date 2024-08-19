@@ -4,14 +4,13 @@
 - add line chart to showcase finance balance trends
 - add a time frame for all
 - fix summary for sums, in finance balances summary, it's not filtering the account owner
-- add "required value" display
-- add error flashbar if there's an error
-- add flashbar component for overall app, and make it global
 
 LATER
 
 - showcase config to summary and think about how to save the config
 - find out if you can disable scroll in background if modal is open
+- if a required value isn't provided, make it error
+- add a clear all notifications notification like previous app
 
 DONE
 
@@ -32,3 +31,7 @@ DONE
 - sort tags and multiple items when loaded instead of later [DONE 8/17/24]
 - sometimes when using the add multiple items using the keyboard and choosing an autosuggest field via keyboard, it returns the stringified value, rather than autocompleting [DONE 8/17/24]
 - fix adding items with empty values [DONE 8/17/24]
+- add error flashbar if there's an error [DONE 8/18/24]
+- add flashbar component for overall app, and make it global [DONE 8/18/24]
+- fix multiple adds still - either it's going too fast, or something else is happening [DONE 8/18/24]
+- add "required value" display [DONE 8/18/24]

@@ -15,8 +15,8 @@ export const CONFIG_FINANCES_LOG = {
   collection: COLLECTION_NAMES.FINANCES_LOG,
   sort: '-date',
   columns: [
-    { id: 'date', type: TABLE_DISPLAY_TYPES.DATE },
-    { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR },
+    { id: 'date', type: TABLE_DISPLAY_TYPES.DATE, required: true },
+    { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR, required: true },
     {
       id: 'description',
       type: TABLE_DISPLAY_TYPES.TEXT,
@@ -31,6 +31,7 @@ export const CONFIG_FINANCES_LOG = {
       selectType: SELECT_TYPES.SINGLE,
       store: COLLECTION_NAMES.FINANCES_CATEGORY,
       storeField: 'category',
+      required: true,
     },
     {
       id: 'tags',
@@ -47,13 +48,13 @@ export const CONFIG_FINANCES_LOG = {
 export const CONFIG_FINANCES_CATEGORY = {
   collection: COLLECTION_NAMES.FINANCES_CATEGORY,
   sort: 'category',
-  columns: [{ id: 'category', type: TABLE_DISPLAY_TYPES.TEXT }],
+  columns: [{ id: 'category', type: TABLE_DISPLAY_TYPES.TEXT, required: true }],
 };
 
 export const CONFIG_FINANCES_TAG = {
   collection: COLLECTION_NAMES.FINANCES_TAG,
   sort: 'tag',
-  columns: [{ id: 'tag', type: TABLE_DISPLAY_TYPES.TEXT }],
+  columns: [{ id: 'tag', type: TABLE_DISPLAY_TYPES.TEXT, required: true }],
 };
 
 export const CONFIG_FINANCES_FILES = {
@@ -69,6 +70,7 @@ export const CONFIG_FINANCES_FILES = {
       type: TABLE_DISPLAY_TYPES.FILE,
       selectType: SELECT_TYPES.MULTIPLE,
       fileTypes: ['all'],
+      required: true,
     },
   ],
 };

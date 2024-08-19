@@ -241,7 +241,7 @@ export const getColumnDefinitions = (columns) =>
 export const getColumnDefinitionsForEdits = (config, storeValues) =>
   config.columns.map((el) => ({
     id: el.id,
-    header: convertToTitleCase(el.id),
+    header: `${convertToTitleCase(el.id)}${el.required ? ' (Required)' : ''}`,
     cell: (item) => columnCell(el, item),
     sortingField: el.id,
     editConfig: {

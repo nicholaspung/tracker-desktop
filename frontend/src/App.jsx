@@ -1,4 +1,4 @@
-import { AppLayout } from '@cloudscape-design/components';
+import { AppLayout, Flashbar } from '@cloudscape-design/components';
 import { I18nProvider } from '@cloudscape-design/components/i18n';
 import messages from '@cloudscape-design/components/i18n/messages/all.en';
 import { Outlet } from 'react-router-dom';
@@ -17,8 +17,9 @@ export default function App() {
 
   const { toggleDensity, toggleMode } = useTheme();
 
-  const { HelpContent } = useMyStore((state) => ({
+  const { HelpContent, flashbarItems } = useMyStore((state) => ({
     HelpContent: state.HelpContent,
+    flashbarItems: state.flashbarItems,
   }));
 
   useEffect(() => {
@@ -58,6 +59,7 @@ export default function App() {
         toolsHide={!HelpContent}
         onToolsChange={({ detail }) => setToolState(detail.open)}
         content={<Outlet />}
+        notifications={<Flashbar items={flashbarItems} stackItems />}
       />
     </I18nProvider>
   );

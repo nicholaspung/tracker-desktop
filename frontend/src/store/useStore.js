@@ -13,6 +13,7 @@ const useMyStore = create((set) => ({
   pb,
   mode: modeOpts[Mode.Light],
   density: densityOpts[Density.Compact],
+  flashbarItems: [],
   /**
    * @type {{
    *  collectionNames: string[],

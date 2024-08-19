@@ -5,7 +5,7 @@ import {
   FormField,
   Input,
 } from '@cloudscape-design/components';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../lib/display';
 import { convertToTitleCase } from '../utils/display';
 import SelectWithData from './forms/selectWithData';
@@ -37,6 +37,9 @@ export default function Forms({ config, defaultData, setDataUpstream }) {
   });
 
   const [data, setData] = useState(initialData);
+  useEffect(() => {
+    setDataUpstream(data);
+  }, []);
 
   const onChange = async (el, detail, detailField, changeFunc) => {
     let dataForUpstream;
@@ -70,12 +73,15 @@ export default function Forms({ config, defaultData, setDataUpstream }) {
   };
 
   return config.columns.map((el) => {
+    const label = `${convertToTitleCase(el.id)}${
+      el.required ? ' (Requred)' : ''
+    }`;
     switch (el.type) {
       case TABLE_DISPLAY_TYPES.DATE:
         return (
           <FormField
             key={el.id}
-            label={convertToTitleCase(el.id)}
+            label={label}
             constraintText="Use YYYY/MM/DD format."
           >
             <DatePicker
@@ -92,7 +98,7 @@ export default function Forms({ config, defaultData, setDataUpstream }) {
         );
       case TABLE_DISPLAY_TYPES.DOLLAR:
         return (
-          <FormField key={el.id} label={convertToTitleCase(el.id)}>
+          <FormField key={el.id} label={label}>
             <Input
               type="number"
               placeholder="0"
@@ -105,7 +111,7 @@ export default function Forms({ config, defaultData, setDataUpstream }) {
         const storeValue = getStoreValueFromConfig(storeValues, config, el);
         const autoSuggestData = getAutoSuggestDataFromColumn(storeValue, el);
         return (
-          <FormField key={el.id} label={convertToTitleCase(el.id)}>
+          <FormField key={el.id} label={label}>
             <Autosuggest
               expandToViewport
               onChange={({ detail }) => onChange(el, detail, 'value')}
@@ -128,11 +134,12 @@ export default function Forms({ config, defaultData, setDataUpstream }) {
             key={el.id}
             value={data[el.id]}
             onChange={onChange}
+            label={label}
           />
         );
       case TABLE_DISPLAY_TYPES.FILE:
         return (
-          <FormField key={el.id} label={convertToTitleCase(el.id)}>
+          <FormField key={el.id} label={label}>
             <FileUpload
               onChange={({ detail }) => onChange(el, detail, 'value')}
               value={data[el.id]}

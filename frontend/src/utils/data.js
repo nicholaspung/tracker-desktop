@@ -6,6 +6,7 @@ import {
   updatePbRecord,
 } from './api';
 import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../lib/display';
+import { isPbClientError } from './flashbar';
 
 export const transformer = (el, config) => {
   const transform = { id: el.id };
@@ -105,16 +106,23 @@ const transformDataToPbRecordData = (config, data, stores) => {
         const record = stores[column.store].find(
           (el) => el[column.storeField] === value,
         );
-        dataCopy[column.expandFields] = record.id;
+        if (record) {
+          dataCopy[column.expandFields] = record.id;
+        }
       } else if (!dataCopy[column.id]) {
         dataCopy[column.expandFields] = [];
       } else {
-        dataCopy[column.expandFields] = dataCopy[column.id].map((dataValue) => {
-          const record = stores[column.store].find(
-            (el) => el[column.storeField] === dataValue.value,
-          );
-          return record.id;
-        });
+        dataCopy[column.expandFields] = dataCopy[column.id]
+          .map((dataValue) => {
+            const record = stores[column.store].find(
+              (el) => el[column.storeField] === dataValue.value,
+            );
+            if (record) {
+              return record.id;
+            }
+            return undefined;
+          })
+          .filter((el) => el);
       }
     }
   });
@@ -137,7 +145,8 @@ export const addData = async (
       .map((ele) => ele.expandFields),
   });
   if (!data) return null;
-  if (data.name === 'ClientResponseError 0') return null;
+  // returns error object
+  if (isPbClientError(data)) return data;
 
   const transformedData = pbRecordToUseCollectionData(
     data,

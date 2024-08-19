@@ -39,6 +39,7 @@ export default function AddMultipleItems({
   hidePagination,
   hidePreferences,
   hideFilter,
+  dataSentDownstream,
 }) {
   const storeValues = useMyStore((state) => {
     const result = {
@@ -55,11 +56,19 @@ export default function AddMultipleItems({
     ...config.columns,
     { id: 'id', type: TABLE_DISPLAY_TYPES.ID },
   ]);
-  const [addData, setAddData] = useState([emptyValue]);
+  const [addData, setAddData] = useState(
+    itemExists(dataSentDownstream) ? dataSentDownstream : [emptyValue],
+  );
 
   useEffect(() => {
     setDataUpstream(addData);
   }, []);
+  useEffect(() => {
+    if (dataSentDownstream) {
+      setAddData(dataSentDownstream);
+    }
+  }, [dataSentDownstream]);
+
   const [preferences, setPreferences] = useState(
     getDefaultPreferences(config.columns),
   );
@@ -93,12 +102,22 @@ export default function AddMultipleItems({
   const { selectedItems } = collectionProps;
 
   const onAddIcon = () => {
-    setAddData([...addData, emptyValue]);
+    const addedValues = [...addData, emptyValue];
+    setAddData(addedValues);
+    setDataUpstream(addedValues);
   };
   const onTrashIcon = () => {
     if (!itemExists(selectedItems)) return;
 
     setAddData((prev) =>
+      prev.filter((el) => {
+        if (selectedItems.find((ele) => ele.id === el.id)) {
+          return false;
+        }
+        return true;
+      }),
+    );
+    setDataUpstream((prev) =>
       prev.filter((el) => {
         if (selectedItems.find((ele) => ele.id === el.id)) {
           return false;
