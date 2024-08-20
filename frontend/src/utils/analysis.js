@@ -157,12 +157,12 @@ export const filterDataAccordingtoFilterOptions = (
         const filterItem = filters[index];
         const { id, filter } = filterItem;
         const selection = filterOptions[filterOptionsKeys[i]];
+        const value = el[id];
         if (filter === SUMMARY_FILTERS.SELECTION_SINGLE) {
           if (selection.value === ALL_OPTION.value) {
             continue;
           }
-          const value = el[id];
-          if (!value === selection.value) {
+          if (value !== selection.value) {
             override = true;
             break;
           }
@@ -171,21 +171,16 @@ export const filterDataAccordingtoFilterOptions = (
           if (selection[0].value === ALL_OPTION.value) {
             continue;
           }
-          try {
-            const value = el[id];
-            if (Array.isArray(selection)) {
-              let arrayOverride = true; // start off assuming it will be false
-              for (let j = 0; j < selection.length; j += 1) {
-                if (value === selection[j].value) {
-                  arrayOverride = false;
-                  break;
-                }
+          if (Array.isArray(selection)) {
+            let arrayOverride = true; // start off assuming it will be false
+            for (let j = 0; j < selection.length; j += 1) {
+              if (value === selection[j].value) {
+                arrayOverride = false;
+                break;
               }
-              override = arrayOverride;
-              break;
             }
-          } catch (err) {
-            throw new Error('failed in parsing JSON data');
+            override = arrayOverride;
+            break;
           }
         }
       }

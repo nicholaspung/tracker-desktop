@@ -1,7 +1,8 @@
 # TODOS
 
-- add a summary filter for week
-- add a summary filter for "show trend" that only shows up for month/week view
+- add a checkbox to see trend
+- if trend is true, add a summary filter for week that shows up for trend
+- if trend is true, only show month/week
 - add a summary fitler for "I want to see trend for every 2 months/6 months"
 - add line chart to showcase finance balance trends
 - add a component to analyzed the data to show trends, ie sum of how much money spent per month, sum of how much money brought in per month, sum of latest balance according to month for length of time 
@@ -36,6 +37,6 @@ DONE
 - add flashbar component for overall app, and make it global [DONE 8/18/24]
 - fix multiple adds still - either it's going too fast, or something else is happening [DONE 8/18/24]
 - add "required value" display [DONE 8/18/24]
-- fix summary for sums, in finance balances summary, it's not filtering the account owner [DONE 8/18/24?? fixed by itself I assume]
 - fix latest analysis in bar chart [DONE 8/18/24 - turns out it was wrong config]
 - add a time frame for all [DONE 8/18/24]
+- fix summary for sums, in finance balances summary, it's not filtering the account owner [DONE 8/19/24 - seems like its fixed but no idea]
