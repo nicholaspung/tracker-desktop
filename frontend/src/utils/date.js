@@ -146,6 +146,7 @@ export const pbDateToDisplay = (value) => {
   return `${year}-${month}-${day}`;
 };
 
+// value = "YYYY-MM-DD" if isFilter is false, value = "YYYY-MM-DD HH:MM:SS" if isFilter is true
 export const cloudscapeDateToCorrectDateValue = (value, isFilter = false) => {
   const now = new Date();
   if (!value) {

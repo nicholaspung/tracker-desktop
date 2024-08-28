@@ -1,11 +1,13 @@
 import { BarChart } from '@cloudscape-design/components';
+import { useMemo } from 'react';
 import { convertToDollar } from '../../utils/display';
 import EmptyState from '../empty-state';
 import {
-  barChartDataAccordingToFields,
-  latestDataAccordingToField,
-  sumDataAccordingToFields,
+  singleBarChartDataAccordingToFields,
+  getOverallDataAnalysis,
+  multipleBarChartDataAccordingToFields,
 } from '../../utils/analysis';
+import { SELECT_TYPES } from '../../lib/display';
 import { SUMMARY_ANALYSIS } from '../../lib/summary';
 
 // Right now only works for financial graphs in USD
@@ -17,32 +19,44 @@ export default function BarChartComponent({
   popoverTitleField,
   popoverValueField,
   filterOptions,
-  analysis,
+  analysis = [],
   sumField,
   groupFields,
   latestFields,
+  dateField,
+  type,
 }) {
-  let analyzedData = data;
+  const { analyzedData } = useMemo(
+    () =>
+      getOverallDataAnalysis(data, analysis, filterOptions, {
+        sumField,
+        groupFields,
+        latestFields,
+        dateField,
+      }),
+    [data, filterOptions],
+  );
 
-  if (analysis.includes(SUMMARY_ANALYSIS.LATEST)) {
-    analyzedData = latestDataAccordingToField(analyzedData, latestFields);
-  }
-
-  if (analysis.includes(SUMMARY_ANALYSIS.SUM)) {
-    analyzedData = sumDataAccordingToFields(
+  let barChartSeriesData;
+  if (type === SELECT_TYPES.SINGLE) {
+    barChartSeriesData = singleBarChartDataAccordingToFields(
       analyzedData,
-      sumField,
-      groupFields,
+      popoverTitleField,
+      filterOptions.timeFrame,
+      popoverValueField,
+      filterOptions.timeFilter,
+    );
+  } else if (
+    type === SELECT_TYPES.MULTIPLE &&
+    analysis.includes(SUMMARY_ANALYSIS.GROUP)
+  ) {
+    barChartSeriesData = multipleBarChartDataAccordingToFields(
+      analyzedData,
+      popoverTitleField,
+      popoverValueField,
+      dateField,
     );
   }
-
-  const barChartSeriesData = barChartDataAccordingToFields(
-    analyzedData,
-    popoverTitleField,
-    filterOptions.timeFrame,
-    popoverValueField,
-    filterOptions.timeFilter,
-  );
 
   return (
     <BarChart

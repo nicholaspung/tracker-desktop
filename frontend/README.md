@@ -5,7 +5,7 @@
 - if trend is true, only show month/week
 - add a summary fitler for "I want to see trend for every 2 months/6 months"
 - add line chart to showcase finance balance trends
-- add a component to analyzed the data to show trends, ie sum of how much money spent per month, sum of how much money brought in per month, sum of latest balance according to month for length of time 
+- add a component to analyzed the data to show trends, ie sum of how much money spent per month, sum of how much money brought in per month, sum of latest balance according to month for length of time
 
 LATER
 

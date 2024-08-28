@@ -31,7 +31,7 @@ export function ColumnComponent({
             />
           );
         }
-        if (piece.piece === SUMMARY_PIECES.SINGLE_BAR_CHART) {
+        if (piece.piece === SUMMARY_PIECES.BAR_CHART) {
           return (
             <BarChartComponent
               xTitle={piece.xTitle}
@@ -45,6 +45,7 @@ export function ColumnComponent({
               sumField={piece.sumField}
               groupFields={piece.groupFields}
               latestFields={piece.latestFields}
+              type={piece.type}
               key={`${i}${piece.piece}`}
             />
           );

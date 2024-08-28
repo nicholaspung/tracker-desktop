@@ -15,12 +15,13 @@ export const SUMMARY_FILTERS = {
 export const SUMMARY_PIECES = {
   SUMMARY_TABLE: 'summary-table',
   FULL_TABLE: 'full-table',
-  SINGLE_BAR_CHART: 'single-bar-chart',
+  BAR_CHART: 'bar-chart',
 };
 
 export const SUMMARY_ANALYSIS = {
   SUM: 'sum',
   LATEST: 'latest',
+  GROUP: 'group',
 };
 
 export const SUMMARY_ANALYSIS_DISPLAY = {

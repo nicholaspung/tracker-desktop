@@ -75,8 +75,8 @@ export const CONFIG_FINANCES_FILES = {
   ],
 };
 
-export const CONFIG_CUSTOM_FINANCE_SUMMARY = {
-  label: 'finance logs',
+export const CONFIG_CUSTOM_FINANCE_LOG_SUMMARY = {
+  label: 'Summary of finance logs according to filters',
   collection: COLLECTION_NAMES.FINANCES_LOG,
   columns: [
     { id: 'category', type: TABLE_DISPLAY_TYPES.TEXT },
@@ -86,6 +86,7 @@ export const CONFIG_CUSTOM_FINANCE_SUMMARY = {
     {
       filter: SUMMARY_FILTERS.TIME_FILTER,
       exclude: [TIME_FILTERS.WEEK],
+      includeSelection: true,
     },
     {
       filter: SUMMARY_FILTERS.SELECTION_MULTIPLE,
@@ -128,7 +129,7 @@ export const CONFIG_CUSTOM_FINANCE_SUMMARY = {
           ],
         },
         {
-          piece: SUMMARY_PIECES.SINGLE_BAR_CHART,
+          piece: SUMMARY_PIECES.BAR_CHART,
           xTitle: 'Month',
           yTitle: 'Amount',
           ariaLabel: 'Summary of category chart',
@@ -137,6 +138,7 @@ export const CONFIG_CUSTOM_FINANCE_SUMMARY = {
           analysis: [SUMMARY_ANALYSIS.SUM],
           sumField: 'amount',
           groupFields: ['category'],
+          type: SELECT_TYPES.SINGLE,
         },
       ],
     },
@@ -145,6 +147,62 @@ export const CONFIG_CUSTOM_FINANCE_SUMMARY = {
       piece: SUMMARY_PIECES.FULL_TABLE,
       config: CONFIG_FINANCES_LOG,
       label: 'Finance Logs - filtered',
+    },
+  ],
+};
+
+// example of being used to showcase a line trend graph grouped by date
+export const CONFIG_CUSTOM_FINANCE_LOG_TREND = {
+  label: 'Trend of finance logs',
+  collection: COLLECTION_NAMES.FINANCES_LOG,
+  columns: [
+    { id: 'date', type: TABLE_DISPLAY_TYPES.DATE },
+    { id: 'category', type: TABLE_DISPLAY_TYPES.TEXT },
+    { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR },
+  ],
+  filters: [
+    {
+      filter: SUMMARY_FILTERS.TIME_FILTER,
+      includeGroupByEvery: true,
+      exclude: [TIME_FILTERS.ALL, TIME_FILTERS.DATE_RANGE],
+    },
+    {
+      filter: SUMMARY_FILTERS.SELECTION_MULTIPLE,
+      store: COLLECTION_NAMES.FINANCES_CATEGORY,
+      label: 'Select category',
+      optionField: 'category',
+      id: 'category',
+    },
+    {
+      filter: SUMMARY_FILTERS.SELECTION_MULTIPLE,
+      store: COLLECTION_NAMES.FINANCES_TAG,
+      label: 'Select tag',
+      optionField: 'tag',
+      id: 'tags',
+    },
+  ],
+  components: [
+    {
+      piece: SUMMARY_PIECES.BAR_CHART,
+      xTitle: 'Month',
+      yTitle: 'Amount',
+      ariaLabel: 'Trend of category chart',
+      popoverTitleField: 'category',
+      popoverValueField: 'amount',
+      analysis: [SUMMARY_ANALYSIS.SUM, SUMMARY_ANALYSIS.GROUP],
+      sumField: 'amount',
+      groupFields: ['category'],
+      dateField: 'date',
+      type: SELECT_TYPES.MULTIPLE,
+    },
+    { layout: LAYOUT_PIECES.HORIZONTAL_LINE },
+    {
+      piece: SUMMARY_PIECES.SUMMARY_TABLE,
+      label: 'Finance Logs - filtered',
+      analysis: [SUMMARY_ANALYSIS.SUM, SUMMARY_ANALYSIS.GROUP],
+      sumField: 'amount',
+      groupFields: ['category'],
+      dateField: 'date',
     },
   ],
 };

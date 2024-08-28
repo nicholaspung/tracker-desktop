@@ -19,6 +19,8 @@ import { toOptions } from '../../utils/misc';
 export function TimeFilter({
   data,
   exclude,
+  includeSelection,
+  includeGroupByEvery,
   filterOptions,
   setFilterOptions,
   setCurrentFilterOptions,
@@ -43,6 +45,9 @@ export function TimeFilter({
     [TIME_FILTERS.MONTH]: dateToDatePickerMonth(),
     [TIME_FILTERS.DATE_RANGE]: undefined,
   };
+  if (includeGroupByEvery) {
+    initialTimeFrame.groupByEvery = toOptions(1);
+  }
 
   const [timeFrame, setTimeFrame] = useState(initialTimeFrame);
   const [timeFilter, setTimeFilter] = useState(filterOptions.timeFilter);
@@ -63,6 +68,24 @@ export function TimeFilter({
 
   return (
     <SpaceBetween size="xs" direction="horizontal">
+      {includeGroupByEvery ? (
+        <FormField label="Group by every time filter">
+          <Select
+            options={toOptions(
+              Array(12)
+                .fill(1)
+                .map((_, i) => i + 1),
+            )}
+            selectedOption={timeFrame.groupByEvery}
+            onChange={({ detail }) =>
+              setTimeFrame((prev) => ({
+                ...prev,
+                groupByEvery: detail.selectedOption,
+              }))
+            }
+          />
+        </FormField>
+      ) : null}
       <FormField label="Select time filter">
         <Select
           options={TIME_FILTERS_OPTIONS}
@@ -70,7 +93,7 @@ export function TimeFilter({
           onChange={({ detail }) => setTimeFilter(detail.selectedOption)}
         />
       </FormField>
-      {timeFilter.value === TIME_FILTERS.YEAR ? (
+      {includeSelection && timeFilter.value === TIME_FILTERS.YEAR ? (
         <FormField label="Select year">
           <Select
             options={YEAR_OPTIONS}
@@ -84,7 +107,7 @@ export function TimeFilter({
           />
         </FormField>
       ) : null}
-      {timeFilter.value === TIME_FILTERS.MONTH ? (
+      {includeSelection && timeFilter.value === TIME_FILTERS.MONTH ? (
         <FormField label="Select month">
           <DatePicker
             granularity="month"
@@ -110,7 +133,7 @@ export function TimeFilter({
           />
         </FormField>
       ) : null}
-      {timeFilter.value === TIME_FILTERS.DATE_RANGE ? (
+      {includeSelection && timeFilter.value === TIME_FILTERS.DATE_RANGE ? (
         <FormField label="Select date range">
           <DateRangePicker
             dateOnly

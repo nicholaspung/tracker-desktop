@@ -3,6 +3,7 @@ import { useQueries } from '@tanstack/react-query';
 import TableList from '../components/table-list';
 import {
   CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY,
+  CONFIG_CUSTOM_FINANCE_BALANCE_TREND,
   CONFIG_FINANCES_BALANCE,
   CONFIG_FINANCES_BALANCE_ACCOUNT_NAME,
   CONFIG_FINANCES_BALANCE_OWNER,
@@ -101,6 +102,7 @@ export default function FinanceBalances() {
         ]}
       />
       <Summary config={CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY} />
+      <Summary config={CONFIG_CUSTOM_FINANCE_BALANCE_TREND} />
     </SpaceBetween>
   );
 }

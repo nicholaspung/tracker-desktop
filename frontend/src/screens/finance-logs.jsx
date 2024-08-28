@@ -2,7 +2,8 @@ import { SpaceBetween, Tabs } from '@cloudscape-design/components';
 import { useQueries } from '@tanstack/react-query';
 import TableList from '../components/table-list';
 import {
-  CONFIG_CUSTOM_FINANCE_SUMMARY,
+  CONFIG_CUSTOM_FINANCE_LOG_SUMMARY,
+  CONFIG_CUSTOM_FINANCE_LOG_TREND,
   CONFIG_FINANCES_CATEGORY,
   CONFIG_FINANCES_FILES,
   CONFIG_FINANCES_LOG,
@@ -100,7 +101,8 @@ export default function FinanceLogs() {
           },
         ]}
       />
-      <Summary config={CONFIG_CUSTOM_FINANCE_SUMMARY} />
+      <Summary config={CONFIG_CUSTOM_FINANCE_LOG_SUMMARY} />
+      <Summary config={CONFIG_CUSTOM_FINANCE_LOG_TREND} />
     </SpaceBetween>
   );
 }

@@ -4,7 +4,7 @@ import {
   Header,
   SpaceBetween,
 } from '@cloudscape-design/components';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import TableList from './table-list';
 import { ALL_OPTION, toOptions } from '../utils/misc';
 import { filterDataAccordingtoFilterOptions } from '../utils/analysis';
@@ -17,6 +17,7 @@ import { LAYOUT_PIECES } from '../lib/layout';
 import { ColumnComponent } from './summary/column-component';
 import MultiSelectFilter from './summary/multiselect-filter';
 import { SummaryTableComponent } from './summary/summary-table-component';
+import BarChartComponent from './summary/bar-chart-component';
 
 export default function Summary({ config }) {
   const storeNames = getStoreNamesFromConfigFilters(config);
@@ -71,18 +72,18 @@ export default function Summary({ config }) {
     }
   };
 
-  const filteredData = filterDataAccordingtoFilterOptions(
-    storeValues.data,
-    config.filters,
-    currentFilterOptions,
+  const filteredData = useMemo(
+    () =>
+      filterDataAccordingtoFilterOptions(
+        storeValues.data,
+        config.filters,
+        currentFilterOptions,
+      ),
+    [storeValues, config, currentFilterOptions],
   );
 
   return (
-    <Container
-      header={
-        <Header>{`Summary of ${config.label} according to filters`}</Header>
-      }
-    >
+    <Container header={<Header>{config.label}</Header>}>
       <SpaceBetween size="xs" direction="vertical">
         <SpaceBetween size="xs" direction="horizontal">
           {config.filters.map((filter, i) => {
@@ -91,6 +92,8 @@ export default function Summary({ config }) {
                 <TimeFilter
                   data={storeValues.data}
                   exclude={filter.exclude}
+                  includeSelection={filter.includeSelection}
+                  includeGroupByEvery={filter.includeGroupByEvery}
                   filterOptions={filterOptions}
                   setFilterOptions={setFilterOptions}
                   setCurrentFilterOptions={setCurrentFilterOptions}
@@ -180,6 +183,28 @@ export default function Summary({ config }) {
                   sumField={component.sumField}
                   groupFields={component.groupFields}
                   latestFields={component.latestFields}
+                  dateField={component.dateField}
+                  filterOptions={currentFilterOptions}
+                  key={`${i}${component.piece}`}
+                />
+              );
+            }
+            if (component.piece === SUMMARY_PIECES.BAR_CHART) {
+              return (
+                <BarChartComponent
+                  xTitle={component.xTitle}
+                  yTitle={component.yTitle}
+                  ariaLabel={component.ariaLabel}
+                  data={filteredData}
+                  popoverTitleField={component.popoverTitleField}
+                  popoverValueField={component.popoverValueField}
+                  filterOptions={currentFilterOptions}
+                  analysis={component.analysis}
+                  sumField={component.sumField}
+                  groupFields={component.groupFields}
+                  latestFields={component.latestFields}
+                  dateField={component.dateField}
+                  type={component.type}
                   key={`${i}${component.piece}`}
                 />
               );

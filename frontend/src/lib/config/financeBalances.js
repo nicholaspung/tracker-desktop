@@ -85,7 +85,7 @@ export const CONFIG_FINANCES_BALANCE_TYPE = {
 };
 
 export const CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY = {
-  label: 'finance balances',
+  label: 'Summary of finance balances according to filters',
   collection: COLLECTION_NAMES.FINANCES_BALANCE,
   columns: [
     { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR },
@@ -106,6 +106,7 @@ export const CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY = {
     {
       filter: SUMMARY_FILTERS.TIME_FILTER,
       exclude: [TIME_FILTERS.WEEK],
+      includeSelection: true,
     },
     {
       filter: SUMMARY_FILTERS.SELECTION_MULTIPLE,
@@ -152,7 +153,7 @@ export const CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY = {
           ],
         },
         {
-          piece: SUMMARY_PIECES.SINGLE_BAR_CHART,
+          piece: SUMMARY_PIECES.BAR_CHART,
           xTitle: 'Month',
           yTitle: 'Amount',
           ariaLabel: 'Summary of account type chart',
@@ -162,15 +163,94 @@ export const CONFIG_CUSTOM_FINANCE_BALANCE_SUMMARY = {
           sumField: 'amount',
           groupFields: ['account_type', 'account_owner'],
           latestFields: ['account_name', 'account_type', 'account_owner'],
+          type: SELECT_TYPES.SINGLE,
         },
       ],
     },
+    { layout: LAYOUT_PIECES.HORIZONTAL_LINE },
     {
       piece: SUMMARY_PIECES.FULL_TABLE,
       config: CONFIG_FINANCES_BALANCE,
       label: 'Finance Balances - filtered',
       analysis: [SUMMARY_ANALYSIS.LATEST],
       latestFields: ['account_name', 'account_type', 'account_owner'],
+    },
+  ],
+};
+
+// example of being used to showcase a line trend graph grouped by date
+export const CONFIG_CUSTOM_FINANCE_BALANCE_TREND = {
+  label: 'Trend of finance balances',
+  collection: COLLECTION_NAMES.FINANCES_BALANCE,
+  columns: [
+    { id: 'date', type: TABLE_DISPLAY_TYPES.DATE },
+    { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR },
+    {
+      id: 'account_type',
+      type: TABLE_DISPLAY_TYPES.BADGE,
+      expandFields: 'type',
+      expandPath: 'expand.type.account_type',
+    },
+    {
+      id: 'account_owner',
+      type: TABLE_DISPLAY_TYPES.BADGE,
+      expandFields: 'owner',
+      expandPath: 'expand.owner.name',
+    },
+  ],
+  filters: [
+    {
+      filter: SUMMARY_FILTERS.TIME_FILTER,
+      includeGroupByEvery: true,
+      exclude: [TIME_FILTERS.ALL, TIME_FILTERS.DATE_RANGE],
+    },
+    {
+      filter: SUMMARY_FILTERS.SELECTION_MULTIPLE,
+      store: COLLECTION_NAMES.FINANCES_BALANCE_TYPE,
+      label: 'Select account type',
+      optionField: 'account_type',
+      id: 'account_type',
+    },
+    {
+      filter: SUMMARY_FILTERS.SELECTION_MULTIPLE,
+      store: COLLECTION_NAMES.FINANCES_BALANCE_OWNER,
+      label: 'Select account owner',
+      optionField: 'name',
+      id: 'account_owner',
+    },
+  ],
+  components: [
+    {
+      piece: SUMMARY_PIECES.BAR_CHART,
+      xTitle: 'Month',
+      yTitle: 'Amount',
+      ariaLabel: 'Summary of account type chart',
+      popoverTitleField: 'account_type',
+      popoverValueField: 'amount',
+      analysis: [
+        SUMMARY_ANALYSIS.SUM,
+        SUMMARY_ANALYSIS.LATEST,
+        SUMMARY_ANALYSIS.GROUP,
+      ],
+      sumField: 'amount',
+      groupFields: ['account_type', 'account_owner'],
+      latestFields: ['account_name', 'account_type', 'account_owner'],
+      dateField: 'date',
+      type: SELECT_TYPES.MULTIPLE,
+    },
+    { layout: LAYOUT_PIECES.HORIZONTAL_LINE },
+    {
+      piece: SUMMARY_PIECES.SUMMARY_TABLE,
+      label: 'Finance Balances - filtered',
+      analysis: [
+        SUMMARY_ANALYSIS.SUM,
+        SUMMARY_ANALYSIS.LATEST,
+        SUMMARY_ANALYSIS.GROUP,
+      ],
+      sumField: 'amount',
+      groupFields: ['account_type', 'account_owner'],
+      latestFields: ['account_name', 'account_type', 'account_owner'],
+      dateField: 'date',
     },
   ],
 };
