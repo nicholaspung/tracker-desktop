@@ -55,6 +55,7 @@ export default function BarChartComponent({
       popoverTitleField,
       popoverValueField,
       dateField,
+      filterOptions.timeFilter,
     );
   }
 

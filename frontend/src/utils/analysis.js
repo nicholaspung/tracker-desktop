@@ -6,6 +6,7 @@ import {
 import {
   cloudscapeDateToCorrectDateValue,
   dateToDatePicker,
+  dateToDatePickerMonth,
   findLatestDate,
   isCurrentMonth,
   isCurrentYear,
@@ -92,6 +93,32 @@ export const latestDataAccordingToField = (
   return result.flat();
 };
 
+const dateToBarChatDisplay = (date, timeFilter, timeFrame) => {
+  let xDisplay;
+  if (timeFilter.value === TIME_FILTERS.ALL) {
+    xDisplay = 'All';
+  } else if (timeFilter.value === TIME_FILTERS.MONTH) {
+    if (timeFrame) {
+      xDisplay = timeFrame[TIME_FILTERS.MONTH];
+    } else {
+      xDisplay = dateToDatePickerMonth(new Date(date));
+    }
+  } else if (timeFilter.value === TIME_FILTERS.YEAR) {
+    if (timeFrame) {
+      xDisplay = String(timeFrame[TIME_FILTERS.YEAR].value);
+    } else {
+      [xDisplay] = date.split(' ')[0].split('-');
+    }
+  } else if (timeFrame) {
+    const timeFrameValue = timeFrame[TIME_FILTERS.DATE_RANGE];
+    if (!timeFrameValue) return [];
+    xDisplay = `${timeFrameValue.startDate} to ${timeFrameValue.endDate}`;
+  } else {
+    xDisplay = dateToDatePicker(new Date(date));
+  }
+  return xDisplay;
+};
+
 export const singleBarChartDataAccordingToFields = (
   data,
   titleField,
@@ -101,17 +128,7 @@ export const singleBarChartDataAccordingToFields = (
 ) => {
   let xDisplay = '';
   if (timeFrame) {
-    if (timeFilter.value === TIME_FILTERS.ALL) {
-      xDisplay = 'All';
-    } else if (timeFilter.value === TIME_FILTERS.MONTH) {
-      xDisplay = timeFrame[TIME_FILTERS.MONTH];
-    } else if (timeFilter.value === TIME_FILTERS.YEAR) {
-      xDisplay = String(timeFrame[TIME_FILTERS.YEAR].value);
-    } else {
-      const timeFrameValue = timeFrame[TIME_FILTERS.DATE_RANGE];
-      if (!timeFrameValue) return [];
-      xDisplay = `${timeFrameValue.startDate} to ${timeFrameValue.endDate}`;
-    }
+    xDisplay = dateToBarChatDisplay('', timeFilter, timeFrame);
   } else {
     xDisplay = 'loading...';
   }
@@ -127,6 +144,7 @@ export const multipleBarChartDataAccordingToFields = (
   titleField,
   valueField,
   dateField,
+  timeFilter,
 ) => {
   const result = {};
   data.forEach((el) => {
@@ -138,7 +156,10 @@ export const multipleBarChartDataAccordingToFields = (
   return Object.keys(result).map((value) => {
     const chartData = [];
     result[value].forEach((el) => {
-      chartData.push({ x: pbDateToDisplay(el[dateField]), y: el[valueField] });
+      chartData.push({
+        x: dateToBarChatDisplay(el[dateField], timeFilter),
+        y: el[valueField],
+      });
     });
     return {
       title: value,
@@ -435,7 +456,10 @@ export const getOverallDataAnalysis = (
         .map((range) =>
           groupedLatestData[range].map((el) => ({
             ...el,
-            [fields.dateField]: range,
+            [fields.dateField]:
+              timeFilter.value === TIME_FILTERS.WEEK
+                ? range.split('/')[1]
+                : range,
           })),
         )
         .flat();
