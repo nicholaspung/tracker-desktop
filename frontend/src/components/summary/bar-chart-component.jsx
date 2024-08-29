@@ -20,6 +20,7 @@ export default function BarChartComponent({
   popoverValueField,
   filterOptions,
   analysis = [],
+  analysisDisplay,
   sumField,
   groupFields,
   latestFields,
@@ -56,6 +57,8 @@ export default function BarChartComponent({
       popoverValueField,
       dateField,
       filterOptions.timeFilter,
+      analysisDisplay,
+      sumField,
     );
   }
 

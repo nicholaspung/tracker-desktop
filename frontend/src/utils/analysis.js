@@ -1,5 +1,6 @@
 import {
   SUMMARY_ANALYSIS,
+  SUMMARY_ANALYSIS_DISPLAY,
   SUMMARY_FILTERS,
   TIME_FILTERS,
 } from '../lib/summary';
@@ -145,14 +146,52 @@ export const multipleBarChartDataAccordingToFields = (
   valueField,
   dateField,
   timeFilter,
+  analysisDisplay,
+  sumField,
 ) => {
   const result = {};
+  const analysisResult = {};
   data.forEach((el) => {
     if (!result[el[titleField]]) {
       result[el[titleField]] = [];
     }
     result[el[titleField]].push(el);
+    if (analysisDisplay === SUMMARY_ANALYSIS_DISPLAY.POSITIVE_NEGATIVE_TOTAL) {
+      if (!analysisResult[el[dateField]]) {
+        analysisResult[el[dateField]] = [];
+      }
+      analysisResult[el[dateField]].push(el);
+    }
   });
+
+  if (analysisDisplay === SUMMARY_ANALYSIS_DISPLAY.POSITIVE_NEGATIVE_TOTAL) {
+    const positiveData = {
+      title: 'positive',
+      type: 'bar',
+      data: [],
+    };
+    const negativeData = {
+      title: 'negative',
+      type: 'bar',
+      data: [],
+    };
+    Object.keys(analysisResult).forEach((date) => {
+      const { positive, negative } = totalSumOfDataAccordingToField(
+        analysisResult[date],
+        sumField,
+      );
+      positiveData.data.push({
+        x: dateToBarChatDisplay(date, timeFilter),
+        y: positive,
+      });
+      negativeData.data.push({
+        x: dateToBarChatDisplay(date, timeFilter),
+        y: negative,
+      });
+    });
+    return [positiveData, negativeData];
+  }
+
   return Object.keys(result).map((value) => {
     const chartData = [];
     result[value].forEach((el) => {

@@ -200,6 +200,7 @@ export default function Summary({ config }) {
                   popoverValueField={component.popoverValueField}
                   filterOptions={currentFilterOptions}
                   analysis={component.analysis}
+                  analysisDisplay={component.analysisDisplay}
                   sumField={component.sumField}
                   groupFields={component.groupFields}
                   latestFields={component.latestFields}
