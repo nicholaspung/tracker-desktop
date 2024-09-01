@@ -7,7 +7,6 @@ import {
 import { useEffect, useState } from 'react';
 import Layout from '../components/layout';
 import useMyStore from '../store/useStore';
-import { COLLECTION_NAMES } from '../lib/collections';
 import {
   CONFIG_FINANCES_BALANCE,
   CONFIG_FINANCES_BALANCE_ACCOUNT_NAME,
@@ -29,11 +28,7 @@ const WEALTH_PAGE_VIEWS = {
 
 export default function WealthPage() {
   const { setDataInStore } = useMyStore((state) => ({
-    pb: state.pb,
-    financesLog: state[COLLECTION_NAMES.FINANCES_LOG],
     setDataInStore: state.setDataInStore,
-    financesCategory: state[COLLECTION_NAMES.FINANCES_CATEGORY],
-    financesTag: state[COLLECTION_NAMES.FINANCES_TAG],
   }));
 
   const [view, setView] = useState(WEALTH_PAGE_VIEWS.FINANCE_LOGS);

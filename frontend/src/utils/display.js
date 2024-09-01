@@ -34,3 +34,7 @@ export function convertToDollar(str) {
     currency: 'USD',
   });
 }
+
+export function decimalToPercentage(decimal) {
+  return `${(decimal * 100).toFixed(2)}%`;
+}

@@ -3,16 +3,22 @@ import {
   Badge,
   DatePicker,
   Input,
+  Link,
   Multiselect,
   Select,
   SpaceBetween,
 } from '@cloudscape-design/components';
 import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../lib/display';
-import { convertToDollar, convertToTitleCase } from './display';
+import {
+  convertToDollar,
+  convertToTitleCase,
+  decimalToPercentage,
+} from './display';
 import { toOptions } from './misc';
 import { SELECT_BOOL_OPTIONS } from '../lib/forms';
 import { getAutoSuggestDataFromColumn, getStoreValueFromConfig } from './forms';
 import { cloudscapeDateToCorrectDateValue, pbDateToDisplay } from './date';
+import { POCKETBASE_URL } from '../lib/api';
 
 /**
  *
@@ -187,8 +193,9 @@ const columnCell = (el, item) => {
       return pbDateToDisplay(item[el.id]);
     case TABLE_DISPLAY_TYPES.DOLLAR:
       return convertToDollar(item[el.id]);
+    case TABLE_DISPLAY_TYPES.PERCENTAGE:
+      return decimalToPercentage(item[el.id]);
     case TABLE_DISPLAY_TYPES.BADGE:
-    case TABLE_DISPLAY_TYPES.FILE:
       if (Array.isArray(item[el.id])) {
         return (
           <SpaceBetween size="xs" direction="horizontal">
@@ -199,7 +206,32 @@ const columnCell = (el, item) => {
         );
       }
       return <Badge>{item[el.id]}</Badge>;
+    case TABLE_DISPLAY_TYPES.FILE:
+      const API_URL = `${POCKETBASE_URL}/api/files/${item.collectionId}/${item.id}/`;
+      if (Array.isArray(item[el.id])) {
+        return (
+          <SpaceBetween size="xs" direction="horizontal">
+            {item[el.id].sort().map((ele) => (
+              <Link
+                href={`${API_URL}${ele}?download=1`}
+                variant="primary"
+                key={ele}
+              >
+                {ele}
+              </Link>
+            ))}
+          </SpaceBetween>
+        );
+      }
+      const FILE_API_URL = `${API_URL}${item[el.id][0]}`;
+      return (
+        <Link href={`${FILE_API_URL}?download=1`} variant="primary">
+          {item[el.id]}
+        </Link>
+      );
     case TABLE_DISPLAY_TYPES.TEXT:
+    case TABLE_DISPLAY_TYPES.AUTOSUGGEST:
+    case TABLE_DISPLAY_TYPES.NUMBER:
     default:
       return item[el.id];
   }

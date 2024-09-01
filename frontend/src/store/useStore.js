@@ -5,8 +5,9 @@ import { COLLECTION_NAMES } from '../lib/collections';
 import { densityOpts, modeOpts } from '../lib/theme';
 import { fetchPbRecordList } from '../utils/api';
 import { pbRecordsToUseCollectionData, transformer } from '../utils/data';
+import { POCKETBASE_URL } from '../lib/api';
 
-const pb = new Pocketbase('http://127.0.0.1:8090');
+const pb = new Pocketbase(POCKETBASE_URL);
 
 const useMyStore = create((set) => ({
   HelpContent: null,
@@ -83,6 +84,35 @@ const useMyStore = create((set) => ({
    * }}
    */
   [COLLECTION_NAMES.FINANCES_FILES]: [],
+  /**
+   * @type {{
+   *  date: string,
+   *  weight: number,
+   *  unit: object,
+   *  fat_mass: number,
+   *  bone_mass: number,
+   *  muscle_mass: number,
+   *  hydration: number,
+   *  comments: string,
+   *  fat_mass_percentage: number,
+   *  bone_mass_percentage: number,
+   *  muscle_mass_percentage: number
+   * }}
+   */
+  [COLLECTION_NAMES.HEALTH_WEIGHT_LOGS]: [],
+  /**
+   * @type {{
+   *  type: string
+   * }}
+   */
+  [COLLECTION_NAMES.HEALTH_MEASUREMENT_TYPE]: [],
+  /**
+   * @type {{
+   *  date_uploaded: string,
+   *  attachments: string[]
+   * }}
+   */
+  [COLLECTION_NAMES.HEALTH_FILES]: [],
   setDataInStore: (store, data) =>
     set((state) => {
       if (!Object.keys(state).includes(store)) {
@@ -156,6 +186,8 @@ const useMyStore = create((set) => ({
           : undefined,
         sort: config.sort,
       });
+
+      console.log(result);
 
       const transformedResult = pbRecordsToUseCollectionData(
         result,

@@ -74,7 +74,7 @@ export default function Forms({ config, defaultData, setDataUpstream }) {
 
   return config.columns.map((el) => {
     const label = `${convertToTitleCase(el.id)}${
-      el.required ? ' (Requred)' : ''
+      el.required ? ' (Required)' : ''
     }`;
     switch (el.type) {
       case TABLE_DISPLAY_TYPES.DATE:
@@ -96,7 +96,9 @@ export default function Forms({ config, defaultData, setDataUpstream }) {
             />
           </FormField>
         );
+      case TABLE_DISPLAY_TYPES.NUMBER:
       case TABLE_DISPLAY_TYPES.DOLLAR:
+      case TABLE_DISPLAY_TYPES.PERCENTAGE:
         return (
           <FormField key={el.id} label={label}>
             <Input
@@ -108,6 +110,17 @@ export default function Forms({ config, defaultData, setDataUpstream }) {
           </FormField>
         );
       case TABLE_DISPLAY_TYPES.TEXT:
+        return (
+          <FormField key={el.id} label={label}>
+            <Input
+              type="text"
+              placeholder="Write some text here"
+              value={data[el.id]}
+              onChange={({ detail }) => onChange(el, detail, 'value')}
+            />
+          </FormField>
+        );
+      case TABLE_DISPLAY_TYPES.AUTOSUGGEST:
         const storeValue = getStoreValueFromConfig(storeValues, config, el);
         const autoSuggestData = getAutoSuggestDataFromColumn(storeValue, el);
         return (

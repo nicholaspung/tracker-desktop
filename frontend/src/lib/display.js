@@ -7,6 +7,9 @@ export const TABLE_DISPLAY_TYPES = {
   BOOL: 'bool',
   ID: 'id',
   FILE: 'file',
+  NUMBER: 'number',
+  PERCENTAGE: 'percentage',
+  AUTOSUGGEST: 'autosuggest',
 };
 
 export const SELECT_TYPES = {

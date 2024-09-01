@@ -19,7 +19,7 @@ export const CONFIG_FINANCES_LOG = {
     { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR, required: true },
     {
       id: 'description',
-      type: TABLE_DISPLAY_TYPES.TEXT,
+      type: TABLE_DISPLAY_TYPES.AUTOSUGGEST,
       overrideStore: COLLECTION_NAMES.FINANCES_LOG,
       autoSuggestFieldIds: ['category', 'tags'],
     },
@@ -48,13 +48,17 @@ export const CONFIG_FINANCES_LOG = {
 export const CONFIG_FINANCES_CATEGORY = {
   collection: COLLECTION_NAMES.FINANCES_CATEGORY,
   sort: 'category',
-  columns: [{ id: 'category', type: TABLE_DISPLAY_TYPES.TEXT, required: true }],
+  columns: [
+    { id: 'category', type: TABLE_DISPLAY_TYPES.AUTOSUGGEST, required: true },
+  ],
 };
 
 export const CONFIG_FINANCES_TAG = {
   collection: COLLECTION_NAMES.FINANCES_TAG,
   sort: 'tag',
-  columns: [{ id: 'tag', type: TABLE_DISPLAY_TYPES.TEXT, required: true }],
+  columns: [
+    { id: 'tag', type: TABLE_DISPLAY_TYPES.AUTOSUGGEST, required: true },
+  ],
 };
 
 export const CONFIG_FINANCES_FILES = {

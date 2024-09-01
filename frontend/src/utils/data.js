@@ -9,7 +9,7 @@ import { SELECT_TYPES, TABLE_DISPLAY_TYPES } from '../lib/display';
 import { isPbClientError } from './flashbar';
 
 export const transformer = (el, config) => {
-  const transform = { id: el.id };
+  const transform = { id: el.id, collectionId: el.collectionId };
   config.columns.forEach((ele) => {
     const { id } = ele;
     if (!transform[id]) {

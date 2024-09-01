@@ -11,7 +11,10 @@ export const getInitialDataFormat = (columns, defaultData) =>
         [TABLE_DISPLAY_TYPES.BADGE]:
           curr.selectType === SELECT_TYPES.MULTIPLE ? [] : '',
         [TABLE_DISPLAY_TYPES.DOLLAR]: '',
+        [TABLE_DISPLAY_TYPES.NUMBER]: '',
+        [TABLE_DISPLAY_TYPES.PERCENTAGE]: '',
         [TABLE_DISPLAY_TYPES.TEXT]: '',
+        [TABLE_DISPLAY_TYPES.AUTOSUGGEST]: '',
         [TABLE_DISPLAY_TYPES.ID]: crypto.randomUUID(),
         [TABLE_DISPLAY_TYPES.FILE]: [],
       };
@@ -38,6 +41,8 @@ export const getInitialDataFormat = (columns, defaultData) =>
           value = returnData(curr, defaultData, TABLE_DISPLAY_TYPES.FILE);
           break;
         case TABLE_DISPLAY_TYPES.DOLLAR:
+        case TABLE_DISPLAY_TYPES.NUMBER:
+        case TABLE_DISPLAY_TYPES.AUTOSUGGEST:
         case TABLE_DISPLAY_TYPES.TEXT:
         default:
           value = returnData(curr, defaultData, TABLE_DISPLAY_TYPES.TEXT);

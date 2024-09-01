@@ -10,3 +10,4 @@
 
 export * from './config/financeLogs';
 export * from './config/financeBalances';
+export * from './config/bodyComposition';

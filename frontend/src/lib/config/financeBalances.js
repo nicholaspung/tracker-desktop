@@ -19,7 +19,7 @@ export const CONFIG_FINANCES_BALANCE = {
     { id: 'amount', type: TABLE_DISPLAY_TYPES.DOLLAR, required: true },
     {
       id: 'account_name',
-      type: TABLE_DISPLAY_TYPES.TEXT,
+      type: TABLE_DISPLAY_TYPES.AUTOSUGGEST,
       expandFields: 'account_name',
       expandPath: 'expand.account_name.name',
       selectType: SELECT_TYPES.SINGLE,
@@ -53,13 +53,17 @@ export const CONFIG_FINANCES_BALANCE = {
 export const CONFIG_FINANCES_BALANCE_ACCOUNT_NAME = {
   collection: COLLECTION_NAMES.FINANCES_BALANCE_ACCOUNT_NAME,
   sort: 'name',
-  columns: [{ id: 'name', type: TABLE_DISPLAY_TYPES.TEXT, required: true }],
+  columns: [
+    { id: 'name', type: TABLE_DISPLAY_TYPES.AUTOSUGGEST, required: true },
+  ],
 };
 
 export const CONFIG_FINANCES_BALANCE_OWNER = {
   collection: COLLECTION_NAMES.FINANCES_BALANCE_OWNER,
   sort: 'name',
-  columns: [{ id: 'name', type: TABLE_DISPLAY_TYPES.TEXT, required: true }],
+  columns: [
+    { id: 'name', type: TABLE_DISPLAY_TYPES.AUTOSUGGEST, required: true },
+  ],
 };
 
 export const CONFIG_FINANCES_BALANCE_TYPE = {
@@ -68,7 +72,7 @@ export const CONFIG_FINANCES_BALANCE_TYPE = {
   columns: [
     {
       id: 'account_type',
-      type: TABLE_DISPLAY_TYPES.TEXT,
+      type: TABLE_DISPLAY_TYPES.AUTOSUGGEST,
       autoSuggestFieldIds: ['category'],
       required: true,
     },

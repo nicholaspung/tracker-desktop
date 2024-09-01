@@ -8,4 +8,7 @@ export const COLLECTION_NAMES = {
   FINANCES_BALANCE_OWNER: 'finances_balance_owner',
   FINANCES_BALANCE_TYPE: 'finances_balance_type',
   FINANCES_FILES: 'finance_files',
+  HEALTH_WEIGHT_LOGS: 'withings_weight_logs',
+  HEALTH_MEASUREMENT_TYPE: 'measurement_type',
+  HEALTH_FILES: 'health_files',
 };
