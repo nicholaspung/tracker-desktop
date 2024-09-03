@@ -108,7 +108,11 @@ export const fieldEditorSelector = ({
       />
     );
   }
-  if (column.type === TABLE_DISPLAY_TYPES.DOLLAR) {
+  if (
+    column.type === TABLE_DISPLAY_TYPES.DOLLAR ||
+    column.type === TABLE_DISPLAY_TYPES.NUMBER ||
+    column.type === TABLE_DISPLAY_TYPES.PERCENTAGE
+  ) {
     return (
       <Input
         onChange={({ detail }) => setValue(detail.value, column)}

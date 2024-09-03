@@ -33,7 +33,7 @@ export default function HealthPage() {
           <h4>Body Composition Actions</h4>
           <AddItemButtonModal
             config={CONFIG_HEALTH_WEIGHT_LOGS}
-            label="Add log"
+            label="Add weight log"
           />
           <AddItemButtonModal
             config={CONFIG_MEASUREMENT_TYPE}

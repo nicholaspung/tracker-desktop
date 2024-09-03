@@ -177,7 +177,11 @@ export default function AddMultipleItems({
   );
 
   const csvParseToAPIFormat = async () => {
-    const parsedCsvData = csvData.map((el) => {
+    const objectKeys = Object.keys(csvData[0]).length;
+    const filteredCsvData = csvData.filter(
+      (el) => Object.keys(el).length === objectKeys,
+    );
+    const parsedCsvData = filteredCsvData.map((el) => {
       const result = {};
       mappedColumnFields.forEach((ele) => {
         result[ele.id] = el[ele.value];

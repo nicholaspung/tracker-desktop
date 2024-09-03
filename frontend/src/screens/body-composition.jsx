@@ -39,8 +39,8 @@ export default function BodyComposition() {
         variant="container"
         tabs={[
           {
-            label: 'Logs',
-            id: 'logs',
+            label: 'Weight Logs',
+            id: 'weight-logs',
             content: (
               <TableList
                 config={configs[0]}
