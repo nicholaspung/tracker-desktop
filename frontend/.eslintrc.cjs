@@ -38,5 +38,6 @@ module.exports = {
     'react/no-array-index-key': 'off',
     'no-await-in-loop': 'warn',
     indent: 'off',
+    'react/jsx-one-expression-per-line': 'off',
   },
 };

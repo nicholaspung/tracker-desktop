@@ -83,7 +83,7 @@ export const fieldEditorSelector = ({
       />
     );
   }
-  if (column.type === TABLE_DISPLAY_TYPES.TEXT) {
+  if (column.type === TABLE_DISPLAY_TYPES.AUTOSUGGEST) {
     const data = getAutoSuggestDataFromColumn(storeValue, column);
     return (
       <Autosuggest
@@ -111,6 +111,7 @@ export const fieldEditorSelector = ({
   if (
     column.type === TABLE_DISPLAY_TYPES.DOLLAR ||
     column.type === TABLE_DISPLAY_TYPES.NUMBER ||
+    column.type === TABLE_DISPLAY_TYPES.TEXT ||
     column.type === TABLE_DISPLAY_TYPES.PERCENTAGE
   ) {
     return (
@@ -293,7 +294,7 @@ export const getColumnDefinitionsForEdits = (config, storeValues) =>
           column: el,
         };
         if (
-          el.type === TABLE_DISPLAY_TYPES.TEXT ||
+          el.type === TABLE_DISPLAY_TYPES.AUTOSUGGEST ||
           el.type === TABLE_DISPLAY_TYPES.BADGE
         ) {
           fieldEditorSelectorProps.storeValue = getStoreValueFromConfig(

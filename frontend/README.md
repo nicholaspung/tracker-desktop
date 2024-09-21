@@ -8,7 +8,7 @@ LATER
 - showcase config to summary and think about how to save the config
 - find out if you can disable scroll in background if modal is open
 - if a required value isn't provided, make it error
-- add a clear all notifications notification like previous app
+- add a clear all notifications notification like previous app 
 
 DONE
 

@@ -5,11 +5,18 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
 import '@cloudscape-design/global-styles/index.css';
 import ErrorPage from './routes/error-page';
-import { RT_APPLICATIONS, RT_HEALTH, RT_HOME, RT_WEALTH } from './lib/routes';
+import {
+  RT_APPLICATIONS,
+  RT_HEALTH,
+  RT_HOME,
+  RT_TASKS,
+  RT_WEALTH,
+} from './lib/routes';
 import HomePage from './routes/home-page';
 import ApplicationsPage from './routes/applications-page';
 import WealthPage from './routes/wealth-page';
 import HealthPage from './routes/health-page';
+import TasksPage from './routes/tasks-page';
 
 const container = document.getElementById('root');
 
@@ -25,6 +32,7 @@ const router = createBrowserRouter([
       { path: RT_WEALTH, element: <WealthPage /> },
       { path: RT_HEALTH, element: <HealthPage /> },
       { path: RT_APPLICATIONS, element: <ApplicationsPage /> },
+      { path: RT_TASKS, element: <TasksPage /> },
     ],
   },
 ]);

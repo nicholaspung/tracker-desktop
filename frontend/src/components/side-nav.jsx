@@ -14,6 +14,7 @@ export default function SideNav({ activeHref, setActiveHref }) {
       items={[
         { type: 'link', text: 'Wealth', href: '/wealth' },
         { type: 'link', text: 'Health', href: '/health' },
+        { type: 'link', text: 'Tasks', href: '/tasks' },
       ]}
       onFollow={(e) => {
         e.preventDefault();

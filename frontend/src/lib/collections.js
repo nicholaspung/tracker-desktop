@@ -11,4 +11,5 @@ export const COLLECTION_NAMES = {
   HEALTH_WEIGHT_LOGS: 'withings_weight_logs',
   HEALTH_MEASUREMENT_TYPE: 'measurement_type',
   HEALTH_FILES: 'health_files',
+  HABITS: 'habits',
 };

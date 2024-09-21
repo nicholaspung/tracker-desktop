@@ -113,6 +113,7 @@ const useMyStore = create((set) => ({
    * }}
    */
   [COLLECTION_NAMES.HEALTH_FILES]: [],
+  [COLLECTION_NAMES.HABITS]: [],
   setDataInStore: (store, data) =>
     set((state) => {
       if (!Object.keys(state).includes(store)) {
@@ -186,8 +187,6 @@ const useMyStore = create((set) => ({
           : undefined,
         sort: config.sort,
       });
-
-      console.log(result);
 
       const transformedResult = pbRecordsToUseCollectionData(
         result,
