@@ -113,7 +113,30 @@ const useMyStore = create((set) => ({
    * }}
    */
   [COLLECTION_NAMES.HEALTH_FILES]: [],
+  /**
+   * @type {{
+   *  name: string,
+   *  description: string,
+   *  repeatSelection: select
+   *  (repeatEveryXDay, repeatEveryWeekOnXDays, repeatEveryXDayOfMonth, repeatEveryYearOnXDayXMonth)
+   *  repeatEveryXDay: number,
+   *  repeatEveryWeekOnXDays: select (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
+   *  repeatEveryXDayOfMonth: number,
+   *  repeatEveryYearOnXDay: number,
+   *  repeatEveryYearOnXMonth: select (Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec)
+   *  archived: boolean
+   * }}
+   */
   [COLLECTION_NAMES.HABITS]: [],
+  /**
+   * @type {{
+   *  date: string,
+   *  completed: boolean,
+   *  current_relation: object,
+   *  initial_habit: json
+   * }}
+   */
+  [COLLECTION_NAMES.DAILIES]: [],
   setDataInStore: (store, data) =>
     set((state) => {
       if (!Object.keys(state).includes(store)) {

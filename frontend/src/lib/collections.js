@@ -12,4 +12,5 @@ export const COLLECTION_NAMES = {
   HEALTH_MEASUREMENT_TYPE: 'measurement_type',
   HEALTH_FILES: 'health_files',
   HABITS: 'habits',
+  DAILIES: 'dailies',
 };

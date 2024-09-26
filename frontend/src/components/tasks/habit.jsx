@@ -9,81 +9,74 @@ import {
   Input,
   Modal,
   Popover,
-  Select,
   SpaceBetween,
   Textarea,
-  Toggle,
 } from '@cloudscape-design/components';
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import useMyStore from '../../store/useStore';
 import { COLLECTION_NAMES } from '../../lib/collections';
+import { updatePbRecord } from '../../utils/api';
+import { deleteData } from '../../utils/data';
+import { DEFAULT_ERROR_TEXTS, REPEAT_SELECTION } from '../../lib/tasks/tasks';
+import HabitEveryDay from './habit-repeat-frequency/habit-every-day';
+import HabitEveryWeek from './habit-repeat-frequency/habit-every-week';
+import HabitEveryDayOfMonth from './habit-repeat-frequency/habit-every-day-of-month';
+import HabitEveryYear from './habit-repeat-frequency/habit-every-year';
+import { fetchDailies } from '../../utils/tasks/api';
 
-const REPEAT_SELECTION = {
-  REPEAT_EVERY_X_DAY: 'repeatEveryXDay',
-  REPEAT_EVERY_WEEK_ON_X_DAYS: 'repeatEveryWeekOnXDays',
-  REPEAT_EVERY_X_DAY_OF_MONTH: 'repeatEveryXDayOfMonth',
-  REPEAT_EVERY_YEAR_ON_X_DAY_X_MONTH: 'repeatEveryYearOnXDayXMonth',
-};
+export default function Habit({ habits, habit, i, isDaily, children }) {
+  const { pb, replaceItemInStore, removeItemInStore, setDataInStore } =
+    useMyStore((state) => ({
+      pb: state.pb,
+      replaceItemInStore: state.replaceItemInStore,
+      removeItemInStore: state.removeItemInStore,
+      setDataInStore: state.setDataInStore,
+    }));
 
-export default function Habit({ habits, habit, i }) {
-  const { replaceItemInStore, removeItemInStore } = useMyStore((state) => ({
-    replaceItemInStore: state.replaceItemInStore,
-    removeItemInStore: state.removeItemInStore,
-  }));
+  const { refetch } = useQuery({
+    queryKey: [COLLECTION_NAMES.DAILIES],
+    queryFn: () => fetchDailies(pb, setDataInStore),
+    retry: 5,
+    initialData: [],
+  });
 
   const [visible, setVisible] = useState(false);
-  const INITIAL_HABIT = {
-    name: '',
-    description: '',
-    repeatEveryXDay: undefined,
-    repeatEveryWeekOnXDays: [],
-    repeatEveryXDayOfMonth: undefined,
-    repeatEveryYearOnXDay: undefined,
-    repeatEveryYearOnXMonth: undefined,
-    repeatSelection: undefined,
-    archived: false,
-    ...habit,
+  const getInitialHabit = () => {
+    const habitCopy = { ...habit };
+    if (habitCopy.repeatEveryXDayOfMonth) {
+      habitCopy.repeatEveryXDayOfMonth = {
+        value: String(habitCopy.repeatEveryXDayOfMonth),
+        label: String(habitCopy.repeatEveryXDayOfMonth),
+      };
+    }
+    if (habitCopy.repeatEveryYearOnXDay) {
+      habitCopy.repeatEveryYearOnXDay = {
+        value: String(habitCopy.repeatEveryYearOnXDay),
+        label: String(habitCopy.repeatEveryYearOnXDay),
+      };
+    }
+    if (habitCopy.repeatEveryYearOnXMonth) {
+      habitCopy.repeatEveryYearOnXMonth = {
+        value: String(habitCopy.repeatEveryYearOnXMonth),
+        label: String(habitCopy.repeatEveryYearOnXMonth),
+      };
+    }
+    return habitCopy;
   };
+  const INITIAL_HABIT = getInitialHabit();
   const [editHabit, setEditHabit] = useState(INITIAL_HABIT);
-  const DEFAULT_ERROR_TEXTS = {
-    repeatEveryXDay: undefined,
-    repeatEveryWeekOnXDays: undefined,
-    repeatEveryXDayOfMonth: undefined,
-    repeatEveryYearOnXDay: undefined,
-    repeatEveryYearOnXMonth: undefined,
-    repeatSelection: undefined,
-  };
   const [errorEditHabit, setErrorEditHabit] = useState({
     name: undefined,
     ...DEFAULT_ERROR_TEXTS,
   });
-
-  const DAY_OPTIONS = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-    22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  ].map((el) => ({ value: el, label: el }));
-  const WEEK_OPTIONS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const MONTH_OPTIONS = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ].map((el) => ({ value: el, label: el }));
 
   const onModalClose = () => {
     setVisible(false);
     setErrorEditHabit(DEFAULT_ERROR_TEXTS);
   };
 
-  const onUpdate = () => {
+  const onUpdate = async () => {
     let hasError = false;
     if (!editHabit.name) {
       setErrorEditHabit((prev) => ({ ...prev, name: 'Required' }));
@@ -140,18 +133,44 @@ export default function Habit({ habits, habit, i }) {
     if (hasError) {
       return;
     }
-    replaceItemInStore(COLLECTION_NAMES.HABITS, editHabit);
-    onModalClose();
+
+    const pbEditHabit = {
+      ...editHabit,
+      repeatEveryXDayOfMonth: editHabit.repeatEveryXDayOfMonth.value,
+      repeatEveryYearOnXDay: editHabit.repeatEveryYearOnXDay.value,
+      repeatEveryYearOnXMonth: editHabit.repeatEveryYearOnXMonth.value,
+    };
+    const record = await updatePbRecord(pb, {
+      collectionName: COLLECTION_NAMES.HABITS,
+      id: habit.id,
+      body: pbEditHabit,
+    });
+    if (record) {
+      replaceItemInStore(COLLECTION_NAMES.HABITS, record);
+      refetch();
+      onModalClose();
+    }
   };
 
-  const onDelete = () => {
-    removeItemInStore(COLLECTION_NAMES.HABITS, editHabit.id);
+  const onDelete = async () => {
+    await deleteData(
+      pb,
+      { collection: COLLECTION_NAMES.HABITS },
+      { id: habit.id, removeItemInStore },
+    );
     onModalClose();
   };
 
   return (
-    <div>
-      <Grid gridDefinition={[{ colspan: 11 }, { colspan: 1 }]}>
+    <div key={habit.id}>
+      <Grid
+        gridDefinition={
+          isDaily
+            ? [{ colspan: 2 }, { colspan: 9 }, { colspan: 1 }]
+            : [{ colspan: 11 }, { colspan: 1 }]
+        }
+      >
+        {isDaily ? children : null}
         <SpaceBetween size="xs" direction="vertical">
           <span>
             <strong>{habit.name}</strong>
@@ -183,9 +202,11 @@ export default function Habit({ habits, habit, i }) {
         footer={
           <Box float="right">
             <SpaceBetween size="xs" direction="horizontal">
-              <Button onClick={onDelete}>
-                <Icon name="remove" />
-              </Button>
+              {!isDaily ? (
+                <Button onClick={onDelete}>
+                  <Icon name="remove" />
+                </Button>
+              ) : null}
               <Button variant="primary" onClick={onUpdate}>
                 Update
               </Button>
@@ -218,223 +239,31 @@ export default function Habit({ habits, habit, i }) {
             errorText={errorEditHabit.repeatSelection}
           >
             <SpaceBetween size="xs" direction="vertical">
-              <SpaceBetween size="xs" direction="horizontal">
-                <Toggle
-                  checked={
-                    editHabit.repeatSelection ===
-                    REPEAT_SELECTION.REPEAT_EVERY_X_DAY
-                  }
-                  onChange={({ detail }) => {
-                    setEditHabit((prev) => ({
-                      ...prev,
-                      repeatSelection: detail.checked
-                        ? REPEAT_SELECTION.REPEAT_EVERY_X_DAY
-                        : undefined,
-                    }));
-                    setErrorEditHabit((prev) => ({
-                      ...prev,
-                      ...DEFAULT_ERROR_TEXTS,
-                    }));
-                  }}
-                />
-                <SpaceBetween size="xs" direction="horizontal">
-                  Repeat every{' '}
-                  <Input
-                    type="number"
-                    value={editHabit.repeatEveryXDay}
-                    placeholder="0"
-                    onChange={({ detail }) => {
-                      setEditHabit((prev) => ({
-                        ...prev,
-                        repeatEveryXDay: detail.value,
-                      }));
-                      if (errorEditHabit.repeatEveryXDay) {
-                        setErrorEditHabit((prev) => ({
-                          ...prev,
-                          repeatEveryXDay: undefined,
-                        }));
-                      }
-                    }}
-                    invalid={!!errorEditHabit.repeatEveryXDay}
-                  />{' '}
-                  day(s)
-                </SpaceBetween>
-              </SpaceBetween>
-              <FormField
-                errorText={errorEditHabit.repeatEveryWeekOnXDays || undefined}
-              >
-                <SpaceBetween size="xs" direction="horizontal">
-                  <Toggle
-                    checked={
-                      editHabit.repeatSelection ===
-                      REPEAT_SELECTION.REPEAT_EVERY_WEEK_ON_X_DAYS
-                    }
-                    onChange={({ detail }) => {
-                      setEditHabit((prev) => ({
-                        ...prev,
-                        repeatSelection: detail.checked
-                          ? REPEAT_SELECTION.REPEAT_EVERY_WEEK_ON_X_DAYS
-                          : undefined,
-                      }));
-                      setErrorEditHabit((prev) => ({
-                        ...prev,
-                        ...DEFAULT_ERROR_TEXTS,
-                      }));
-                    }}
-                  />
-                  <SpaceBetween size="xs" direction="vertical">
-                    Repeat every week on{' '}
-                    <SpaceBetween size="xs" direction="horizontal">
-                      {WEEK_OPTIONS.map((day) => (
-                        <Button
-                          key={day}
-                          variant={
-                            editHabit.repeatEveryWeekOnXDays.includes(day)
-                              ? 'primary'
-                              : 'normal'
-                          }
-                          onClick={() => {
-                            if (
-                              !editHabit.repeatEveryWeekOnXDays.includes(day)
-                            ) {
-                              const editHabitCopy = { ...editHabit };
-                              editHabitCopy.repeatEveryWeekOnXDays.push(day);
-                              setEditHabit(editHabitCopy);
-                            } else {
-                              setEditHabit((prev) => {
-                                const newRepeatEveryWeekOnXDays =
-                                  prev.repeatEveryWeekOnXDays;
-                                const index =
-                                  newRepeatEveryWeekOnXDays.findIndex(
-                                    (el) => el === day,
-                                  );
-                                if (index !== -1) {
-                                  newRepeatEveryWeekOnXDays.splice(index, 1);
-                                  return {
-                                    ...prev,
-                                    repeatEveryWeekOnXDays:
-                                      newRepeatEveryWeekOnXDays,
-                                  };
-                                }
-                                return prev;
-                              });
-                            }
-                            setErrorEditHabit((prev) => ({
-                              ...prev,
-                              ...DEFAULT_ERROR_TEXTS,
-                            }));
-                          }}
-                        >
-                          {day}
-                        </Button>
-                      ))}
-                    </SpaceBetween>
-                  </SpaceBetween>
-                </SpaceBetween>
-              </FormField>
-              <SpaceBetween size="xs" direction="horizontal">
-                <Toggle
-                  checked={
-                    editHabit.repeatSelection ===
-                    REPEAT_SELECTION.REPEAT_EVERY_X_DAY_OF_MONTH
-                  }
-                  onChange={({ detail }) => {
-                    setEditHabit((prev) => ({
-                      ...prev,
-                      repeatSelection: detail.checked
-                        ? REPEAT_SELECTION.REPEAT_EVERY_X_DAY_OF_MONTH
-                        : undefined,
-                    }));
-                    setErrorEditHabit((prev) => ({
-                      ...prev,
-                      ...DEFAULT_ERROR_TEXTS,
-                    }));
-                  }}
-                />
-                <SpaceBetween size="xs" direction="horizontal">
-                  Repeat on the{' '}
-                  <Select
-                    options={DAY_OPTIONS}
-                    selectedOption={editHabit.repeatEveryXDayOfMonth}
-                    placeholder="Day"
-                    onChange={({ detail }) => {
-                      setEditHabit((prev) => ({
-                        ...prev,
-                        repeatEveryXDayOfMonth: detail.selectedOption,
-                      }));
-                      if (errorEditHabit.repeatEveryXDayOfMonth) {
-                        setErrorEditHabit((prev) => ({
-                          ...prev,
-                          repeatEveryXDayOfMonth: undefined,
-                        }));
-                      }
-                    }}
-                    invalid={!!errorEditHabit.repeatEveryXDayOfMonth}
-                  />{' '}
-                  day of every month
-                </SpaceBetween>
-              </SpaceBetween>
-              <SpaceBetween size="xs" direction="horizontal">
-                <Toggle
-                  checked={
-                    editHabit.repeatSelection ===
-                    REPEAT_SELECTION.REPEAT_EVERY_YEAR_ON_X_DAY_X_MONTH
-                  }
-                  onChange={({ detail }) => {
-                    setEditHabit((prev) => ({
-                      ...prev,
-                      repeatSelection: detail.checked
-                        ? REPEAT_SELECTION.REPEAT_EVERY_YEAR_ON_X_DAY_X_MONTH
-                        : undefined,
-                    }));
-                    setErrorEditHabit((prev) => ({
-                      ...prev,
-                      ...DEFAULT_ERROR_TEXTS,
-                    }));
-                  }}
-                />
-                <SpaceBetween size="xs" direction="horizontal">
-                  Repeat every year on{' '}
-                  <Select
-                    key="habitday"
-                    options={DAY_OPTIONS}
-                    selectedOption={editHabit.repeatEveryYearOnXDay}
-                    placeholder="Day"
-                    onChange={({ detail }) => {
-                      setEditHabit((prev) => ({
-                        ...prev,
-                        repeatEveryYearOnXDay: detail.selectedOption,
-                      }));
-                      if (errorEditHabit.repeatEveryYearOnXDay) {
-                        setErrorEditHabit((prev) => ({
-                          ...prev,
-                          repeatEveryYearOnXDay: undefined,
-                        }));
-                      }
-                    }}
-                    invalid={!!errorEditHabit.repeatEveryYearOnXDay}
-                  />{' '}
-                  <Select
-                    key="habitmonth"
-                    options={MONTH_OPTIONS}
-                    selectedOption={editHabit.repeatEveryYearOnXMonth}
-                    placeholder="Month"
-                    onChange={({ detail }) => {
-                      setEditHabit((prev) => ({
-                        ...prev,
-                        repeatEveryYearOnXMonth: detail.selectedOption,
-                      }));
-                      if (errorEditHabit.repeatEveryYearOnXMonth) {
-                        setErrorEditHabit((prev) => ({
-                          ...prev,
-                          repeatEveryYearOnXMonth: undefined,
-                        }));
-                      }
-                    }}
-                    invalid={!!errorEditHabit.repeatEveryYearOnXMonth}
-                  />
-                </SpaceBetween>
-              </SpaceBetween>
+              <HabitEveryDay
+                editHabit={editHabit}
+                errorEditHabit={errorEditHabit}
+                setEditHabit={setEditHabit}
+                setErrorEditHabit={setErrorEditHabit}
+              />
+              <HabitEveryWeek
+                editHabit={editHabit}
+                errorEditHabit={errorEditHabit}
+                setEditHabit={setEditHabit}
+                setErrorEditHabit={setErrorEditHabit}
+                habit={habit}
+              />
+              <HabitEveryDayOfMonth
+                editHabit={editHabit}
+                errorEditHabit={errorEditHabit}
+                setEditHabit={setEditHabit}
+                setErrorEditHabit={setErrorEditHabit}
+              />
+              <HabitEveryYear
+                editHabit={editHabit}
+                errorEditHabit={errorEditHabit}
+                setEditHabit={setEditHabit}
+                setErrorEditHabit={setErrorEditHabit}
+              />
             </SpaceBetween>
           </FormField>
           <FormField label="Archive">

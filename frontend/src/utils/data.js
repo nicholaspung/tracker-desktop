@@ -10,20 +10,22 @@ import { isPbClientError } from './flashbar';
 
 export const transformer = (el, config) => {
   const transform = { id: el.id, collectionId: el.collectionId };
-  config.columns.forEach((ele) => {
-    const { id } = ele;
-    if (!transform[id]) {
-      if (ele.expandPath) {
-        const value = jmespath.search(el, ele.expandPath);
-        if (Array.isArray(value)) {
-          value.sort();
+  if (config.columns) {
+    config.columns.forEach((ele) => {
+      const { id } = ele;
+      if (!transform[id]) {
+        if (ele.expandPath) {
+          const value = jmespath.search(el, ele.expandPath);
+          if (Array.isArray(value)) {
+            value.sort();
+          }
+          transform[id] = value;
+        } else {
+          transform[id] = el[id];
         }
-        transform[id] = value;
-      } else {
-        transform[id] = el[id];
       }
-    }
-  });
+    });
+  }
   return transform;
 };
 

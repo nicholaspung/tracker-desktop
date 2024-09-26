@@ -2,6 +2,7 @@
 
 - add line chart to showcase finance balance trends
 - test if import health logs work
+- fix summary filtering of multiple selections (ex. finance logs, if I want to filter and see only logs with misc as categories, and if a log includes amazon, show me only those logs )
 
 LATER
 

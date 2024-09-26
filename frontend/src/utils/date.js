@@ -166,3 +166,17 @@ export const cloudscapeDateToCorrectDateValue = (value, isFilter = false) => {
   const result = new Date(year, Number(month) - 1, day, hour, min);
   return result;
 };
+
+export const daysBetweenDates = (date1, date2) => {
+  // Convert both dates to milliseconds
+  const date1Ms = date1.getTime();
+  const date2Ms = date2.getTime();
+
+  // Calculate the difference in milliseconds
+  const differenceMs = Math.abs(date2Ms - date1Ms);
+
+  // Convert the difference to days
+  const days = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
+
+  return days;
+};

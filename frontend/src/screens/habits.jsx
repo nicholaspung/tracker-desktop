@@ -6,63 +6,36 @@ import {
   Icon,
   Input,
   SpaceBetween,
+  Spinner,
 } from '@cloudscape-design/components';
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import useMyStore from '../store/useStore';
 import { COLLECTION_NAMES } from '../lib/collections';
 import Habit from '../components/tasks/habit';
+import { addPbRecord } from '../utils/api';
+import { isPbClientError } from '../utils/flashbar';
+import { fetchHabits } from '../utils/tasks/api';
 
 export default function Habits() {
   const [addHabit, setAddHabit] = useState({});
-  const { habits, addItemToStore } = useMyStore((state) => ({
-    habits: state.habits,
-    addItemToStore: state.addItemToStore,
-  }));
+  const { pb, habits, addItemToStore, setDataInStore } = useMyStore(
+    (state) => ({
+      pb: state.pb,
+      habits: state.habits,
+      addItemToStore: state.addItemToStore,
+      setDataInStore: state.setDataInStore,
+    }),
+  );
 
-  const fakeHabits = [
-    ...habits,
-    {
-      id: '1',
-      name: 'hi',
-      description: 'description',
-      repeatEveryXDay: '0',
-      repeatEveryWeekOnXDays: [],
-      repeatEveryXDayOfMonth: '0',
-      repeatEveryYearOnXDay: '',
-      repeatEveryYearOnXMonth: '',
-      repeatSelection: undefined,
-      archived: false,
-      updated: 1,
-    },
-    {
-      id: '2',
-      name: 'hi 2',
-      description: 'description 2',
-      repeatEveryXDay: '0',
-      repeatEveryWeekOnXDays: [],
-      repeatEveryXDayOfMonth: '0',
-      repeatEveryYearOnXDay: '',
-      repeatEveryYearOnXMonth: '',
-      repeatSelection: undefined,
-      archived: true,
-      updated: 2,
-    },
-    {
-      id: '3',
-      name: 'hi 3',
-      description: 'description 3',
-      repeatEveryXDay: '0',
-      repeatEveryWeekOnXDays: [],
-      repeatEveryXDayOfMonth: '0',
-      repeatEveryYearOnXDay: '',
-      repeatEveryYearOnXMonth: '',
-      repeatSelection: undefined,
-      archived: false,
-      updated: 3,
-    },
-  ];
+  const { isLoading, refetch } = useQuery({
+    queryKey: [COLLECTION_NAMES.HABITS],
+    queryFn: () => fetchHabits(pb, setDataInStore),
+    retry: 5,
+    initialData: [],
+  });
 
-  const { activeHabits, archivedHabits } = fakeHabits
+  const { activeHabits, archivedHabits } = habits
     .sort((a, b) => {
       if (a.updated > b.updated) {
         return -1;
@@ -86,20 +59,37 @@ export default function Habits() {
       { activeHabits: [], archivedHabits: [] },
     );
 
-  const onAddHabit = () => {
+  const onAddHabit = async () => {
     if (!addHabit.name) {
-      return;
+      return null;
     }
-    addItemToStore(COLLECTION_NAMES.HABITS, {
-      ...addHabit,
-      id: crypto.randomUUID(),
+    const data = await addPbRecord(pb, {
+      collectionName: COLLECTION_NAMES.HABITS,
+      body: addHabit,
     });
+    if (!data) return null;
+    if (isPbClientError(data)) return data;
+
+    addItemToStore(COLLECTION_NAMES.HABITS, data);
     setAddHabit({});
+
+    return null;
   };
 
   return (
-    <Container header={<Header>Habits</Header>}>
+    <Container>
       <SpaceBetween direction="vertical" size="xs">
+        <Grid gridDefinition={[{ colspan: 6 }]} key="top">
+          <Header
+            actions={
+              <Button onClick={refetch}>
+                <Icon name="refresh" />
+              </Button>
+            }
+          >
+            Habits
+          </Header>
+        </Grid>
         <Grid gridDefinition={[{ colspan: 5 }, { colspan: 1 }]} key="middle">
           <Input
             value={addHabit.name}
@@ -113,33 +103,46 @@ export default function Habits() {
           </Button>
         </Grid>
         <Grid gridDefinition={[{ colspan: 6 }]} key="bottom">
-          <Container header={<Header>Individual habits</Header>}>
-            <div key="div1">
-              <u>Active habits</u>
-            </div>
-            <br />
-            {activeHabits.map((habit, i) => (
-              <Habit
-                habits={activeHabits}
-                habit={habit}
-                i={i}
-                key={`${habit.name}${i + 10}`}
-              />
-            ))}
-            <br />
-            <div key="div2">
-              <u>Archived habits</u>
-            </div>
-            <br />
-            {archivedHabits.map((habit, i) => (
-              <Habit
-                habits={archivedHabits}
-                habit={habit}
-                i={i}
-                key={`${habit.name}${i + 12}`}
-              />
-            ))}
-          </Container>
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <SpaceBetween size="xs" direction="vertical">
+              <Container>
+                <Header>Active habits</Header>
+                <br />
+                {activeHabits.map((habit, i) => (
+                  <Habit
+                    habits={activeHabits}
+                    habit={habit}
+                    i={i}
+                    key={habit.id}
+                  />
+                ))}
+                {!activeHabits.length ? (
+                  <p>
+                    <i>No active habits</i>
+                  </p>
+                ) : null}
+              </Container>
+              <Container>
+                <Header>Archived habits</Header>
+                <br />
+                {archivedHabits.map((habit, i) => (
+                  <Habit
+                    habits={archivedHabits}
+                    habit={habit}
+                    i={i}
+                    key={habit.id}
+                  />
+                ))}
+                {!archivedHabits.length ? (
+                  <p>
+                    <i>No archived habits</i>
+                  </p>
+                ) : null}
+              </Container>
+            </SpaceBetween>
+          )}
         </Grid>
       </SpaceBetween>
     </Container>

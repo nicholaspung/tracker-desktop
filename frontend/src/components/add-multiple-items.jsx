@@ -274,7 +274,6 @@ export default function AddMultipleItems({
                 Reset
               </Button>
             ) : null}
-            <Button onClick={() => console.log(addData)}>Log</Button>
           </SpaceBetween>
         }
       >
