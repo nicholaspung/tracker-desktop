@@ -25,7 +25,7 @@ import HabitEveryDayOfMonth from './habit-repeat-frequency/habit-every-day-of-mo
 import HabitEveryYear from './habit-repeat-frequency/habit-every-year';
 import { fetchDailies } from '../../utils/tasks/api';
 
-export default function Habit({ habits, habit, i, isDaily, children }) {
+export default function Habit({ habits, habit, i, isDaily, children, daily }) {
   const { pb, replaceItemInStore, removeItemInStore, setDataInStore } =
     useMyStore((state) => ({
       pb: state.pb,
@@ -161,6 +161,14 @@ export default function Habit({ habits, habit, i, isDaily, children }) {
     onModalClose();
   };
 
+  const onDeleteDaily = async () => {
+    await deleteData(
+      pb,
+      { collection: COLLECTION_NAMES.DAILIES },
+      { id: daily.id, removeItemInStore },
+    );
+  };
+
   return (
     <div key={habit.id}>
       <Grid
@@ -183,12 +191,22 @@ export default function Habit({ habits, habit, i, isDaily, children }) {
           size="small"
           triggerType="custom"
           content={
-            <Button variant="inline-link" onClick={() => setVisible(true)}>
-              <SpaceBetween size="xs" direction="horizontal">
-                <Icon name="edit" />
-                <span>Edit</span>
-              </SpaceBetween>
-            </Button>
+            <SpaceBetween size="xs" direction="vertical">
+              <Button variant="inline-link" onClick={() => setVisible(true)}>
+                <SpaceBetween size="xs" direction="horizontal">
+                  <Icon name="edit" />
+                  <span>Edit</span>
+                </SpaceBetween>
+              </Button>
+              {isDaily ? (
+                <Button variant="inline-link" onClick={onDeleteDaily}>
+                  <SpaceBetween size="xs" direction="horizontal">
+                    <Icon name="remove" />
+                    <span>Delete</span>
+                  </SpaceBetween>
+                </Button>
+              ) : null}
+            </SpaceBetween>
           }
         >
           <Button variant="icon" iconName="ellipsis" />

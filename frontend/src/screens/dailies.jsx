@@ -211,6 +211,7 @@ export default function Dailies() {
                 habit={daily.expand.current_relation}
                 i={i}
                 key={daily.id}
+                daily={daily}
                 isDaily
               >
                 <Button
