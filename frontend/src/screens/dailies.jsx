@@ -1,7 +1,7 @@
 import {
   Button,
+  ColumnLayout,
   Container,
-  Grid,
   Header,
   Icon,
   ProgressBar,
@@ -11,10 +11,10 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { COLLECTION_NAMES } from '../lib/collections';
-import { addPbRecord, updatePbRecord } from '../utils/api';
+import { addPbRecord } from '../utils/api';
 import useMyStore from '../store/useStore';
 import { isPbClientError } from '../utils/flashbar';
-import { fetchDailies } from '../utils/tasks/api';
+import { fetchDailies, updateDaily } from '../utils/tasks/api';
 import {
   cloudscapeDateToCorrectDateValue,
   dateToDatePicker,
@@ -28,6 +28,7 @@ import {
 } from '../lib/tasks/tasks';
 import Habit from '../components/tasks/habit';
 import { getCompletionPercentage } from '../utils/tasks/daily';
+import BigCalendar from '../components/tasks/big-calendar';
 
 export default function Dailies() {
   const {
@@ -69,9 +70,6 @@ export default function Dailies() {
   );
   const activeHabits = habits.filter((habit) => !habit.archived);
 
-  /**
-   * TODO
-   */
   const hasDailyAlreadyBeenCreated = (habit) => {
     if (!todaysDailies.length) return false;
 
@@ -151,20 +149,6 @@ export default function Dailies() {
     return null;
   };
 
-  const updateDaily = async (daily) => {
-    const record = await updatePbRecord(pb, {
-      collectionName: COLLECTION_NAMES.DAILIES,
-      id: daily.id,
-      expandFields: ['current_relation'],
-      body: {
-        completed: !daily.completed,
-      },
-    });
-    if (record) {
-      replaceItemInStore(COLLECTION_NAMES.DAILIES, record);
-    }
-  };
-
   useEffect(() => {
     if (!hasTodaysDailiesBeenCreated()) {
       createDailiesFromHabits();
@@ -173,7 +157,7 @@ export default function Dailies() {
 
   return (
     <Container>
-      <Grid gridDefinition={[{ colspan: 6 }]}>
+      <ColumnLayout columns={2}>
         <SpaceBetween size="m" direction="vertical">
           <Header
             actions={
@@ -198,33 +182,32 @@ export default function Dailies() {
             Dailies
           </Header>
           <ProgressBar value={getCompletionPercentage(todaysDailies)} />
-        </SpaceBetween>
-      </Grid>
-      <Grid gridDefinition={[{ colspan: 6 }]}>
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          <Container>
-            {todaysDailies.map((daily, i) => (
-              <Habit
-                habits={todaysDailies}
-                habit={daily.expand.current_relation}
-                i={i}
-                key={daily.id}
-                daily={daily}
-                isDaily
-              >
-                <Button
-                  variant={daily.completed ? 'primary' : 'normal'}
-                  onClick={() => updateDaily(daily)}
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <Container>
+              {todaysDailies.map((daily, i) => (
+                <Habit
+                  habits={todaysDailies}
+                  habit={daily.expand.current_relation}
+                  i={i}
+                  key={daily.id}
+                  daily={daily}
+                  isDaily
                 >
-                  <Icon name="check" />
-                </Button>
-              </Habit>
-            ))}
-          </Container>
-        )}
-      </Grid>
+                  <Button
+                    variant={daily.completed ? 'primary' : 'normal'}
+                    onClick={() => updateDaily(pb, replaceItemInStore, daily)}
+                  >
+                    <Icon name="check" />
+                  </Button>
+                </Habit>
+              ))}
+            </Container>
+          )}
+        </SpaceBetween>
+        <BigCalendar />
+      </ColumnLayout>
     </Container>
   );
 }

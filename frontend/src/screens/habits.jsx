@@ -1,5 +1,6 @@
 import {
   Button,
+  ColumnLayout,
   Container,
   Grid,
   Header,
@@ -35,7 +36,7 @@ export default function Habits() {
     initialData: [],
   });
 
-  const { activeHabits, archivedHabits } = habits
+  const { activeHabits, archivedHabits, newlyCreatedHabits } = habits
     .sort((a, b) => {
       if (a.updated > b.updated) {
         return -1;
@@ -50,13 +51,15 @@ export default function Habits() {
         if (acc) {
           if (curr.archived) {
             acc.archivedHabits.push(curr);
+          } else if (!curr.repeatSelection) {
+            acc.newlyCreatedHabits.push(curr);
           } else {
             acc.activeHabits.push(curr);
           }
         }
         return acc;
       },
-      { activeHabits: [], archivedHabits: [] },
+      { activeHabits: [], archivedHabits: [], newlyCreatedHabits: [] },
     );
 
   const onAddHabit = async () => {
@@ -78,8 +81,8 @@ export default function Habits() {
 
   return (
     <Container>
-      <SpaceBetween direction="vertical" size="xs">
-        <Grid gridDefinition={[{ colspan: 6 }]} key="top">
+      <ColumnLayout columns={2}>
+        <SpaceBetween direction="vertical" size="xs">
           <Header
             actions={
               <Button onClick={refetch}>
@@ -89,24 +92,11 @@ export default function Habits() {
           >
             Habits
           </Header>
-        </Grid>
-        <Grid gridDefinition={[{ colspan: 5 }, { colspan: 1 }]} key="middle">
-          <Input
-            value={addHabit.name}
-            onChange={({ detail }) =>
-              setAddHabit((prev) => ({ ...prev, name: detail.value }))
-            }
-            placeholder="Add new habit here"
-          />
-          <Button variant="primary" onClick={onAddHabit}>
-            <Icon name="add-plus" />
-          </Button>
-        </Grid>
-        <Grid gridDefinition={[{ colspan: 6 }]} key="bottom">
           {isLoading ? (
             <Spinner />
           ) : (
             <SpaceBetween size="xs" direction="vertical">
+              <br />
               <Container>
                 <Header>Active habits</Header>
                 <br />
@@ -124,27 +114,60 @@ export default function Habits() {
                   </p>
                 ) : null}
               </Container>
-              <Container>
-                <Header>Archived habits</Header>
-                <br />
-                {archivedHabits.map((habit, i) => (
-                  <Habit
-                    habits={archivedHabits}
-                    habit={habit}
-                    i={i}
-                    key={habit.id}
-                  />
-                ))}
-                {!archivedHabits.length ? (
-                  <p>
-                    <i>No archived habits</i>
-                  </p>
-                ) : null}
-              </Container>
             </SpaceBetween>
           )}
-        </Grid>
-      </SpaceBetween>
+        </SpaceBetween>
+        <SpaceBetween size="xs" direction="vertical">
+          <Grid gridDefinition={[{ colspan: 10 }, { colspan: 2 }]} key="middle">
+            <Input
+              value={addHabit.name}
+              onChange={({ detail }) =>
+                setAddHabit((prev) => ({ ...prev, name: detail.value }))
+              }
+              placeholder="Add new habit here"
+            />
+            <Button variant="primary" onClick={onAddHabit}>
+              <Icon name="add-plus" />
+            </Button>
+          </Grid>
+          <Container>
+            <Header description="Habits that still need configuration.">
+              Newly created habits
+            </Header>
+            <br />
+            {newlyCreatedHabits.map((habit, i) => (
+              <Habit
+                habits={newlyCreatedHabits}
+                habit={habit}
+                i={i}
+                key={habit.id}
+              />
+            ))}
+            {!newlyCreatedHabits.length ? (
+              <p>
+                <i>No newly created habits</i>
+              </p>
+            ) : null}
+          </Container>
+          <Container>
+            <Header>Archived habits</Header>
+            <br />
+            {archivedHabits.map((habit, i) => (
+              <Habit
+                habits={archivedHabits}
+                habit={habit}
+                i={i}
+                key={habit.id}
+              />
+            ))}
+            {!archivedHabits.length ? (
+              <p>
+                <i>No archived habits</i>
+              </p>
+            ) : null}
+          </Container>
+        </SpaceBetween>
+      </ColumnLayout>
     </Container>
   );
 }

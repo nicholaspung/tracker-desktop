@@ -17,6 +17,7 @@ import ApplicationsPage from './routes/applications-page';
 import WealthPage from './routes/wealth-page';
 import HealthPage from './routes/health-page';
 import TasksPage from './routes/tasks-page';
+import './index.css';
 
 const container = document.getElementById('root');
 

@@ -1,4 +1,5 @@
 export const getCompletionPercentage = (objects) => {
+  if (!objects) return undefined;
   if (objects.length === 0) {
     return 0; // Return 0 if the array is empty to avoid division by zero
   }
