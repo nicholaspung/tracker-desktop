@@ -137,6 +137,49 @@ const useMyStore = create((set) => ({
    * }}
    */
   [COLLECTION_NAMES.DAILIES]: [],
+  /**
+   * @type {{
+   *  name: string,
+   *  description: string
+   * }}
+   */
+  [COLLECTION_NAMES.INVENTORY_CATEGORY]: [],
+  /**
+   * @type {{
+   *  item: object,
+   *  quantity: number,
+   *  unit: object,
+   *  location: object,
+   *  expiration_date: string,
+   *  notes: string
+   * }}
+   */
+  [COLLECTION_NAMES.INVENTORY_ENTRY]: [],
+  /**
+   * @type {{
+   *  name: string,
+   *  description: string,
+   *  category: object,
+   *  default_location: object,
+   *  default_unit: object,
+   *  minimum_stock: number
+   * }}
+   */
+  [COLLECTION_NAMES.INVENTORY_ITEM]: [],
+  /**
+   * @type {{
+   *  name: string,
+   *  description: string
+   * }}
+   */
+  [COLLECTION_NAMES.INVENTORY_LOCATION]: [],
+  /**
+   * @type {{
+   *  name: string,
+   *  abbreviation: string
+   * }}
+   */
+  [COLLECTION_NAMES.INVENTORY_UNIT]: [],
   setDataInStore: (store, data) =>
     set((state) => {
       if (!Object.keys(state).includes(store)) {

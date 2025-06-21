@@ -84,6 +84,7 @@ export default function BigCalendar() {
         <CalendarDay
           day={day}
           colorClass={colorClass}
+          completion={completion}
           key={day}
           month={month}
           dailies={dayDailies}
@@ -115,7 +116,7 @@ export default function BigCalendar() {
             Today
           </Button>
         ) : null}
-        <Button onClick={() => changeMonth(-1)}>
+        <Button onClick={() => changeMonth(1)}>
           <Icon name="angle-right" />
         </Button>
       </div>
@@ -130,7 +131,7 @@ export default function BigCalendar() {
       <div className="mt-4 flex flex-col space-y-2">
         <h3 className="font-semibold">Legend:</h3>
         <div className="flex items-center">
-          <div className="w-4 h-4 bg-blue-500 mr-2" />
+          <div className="w-4 h-4 bg-red-500 mr-2" />
           <span>0% - 69% completed</span>
         </div>
         <div className="flex items-center">

@@ -1,7 +1,6 @@
 import {
   SUMMARY_ANALYSIS,
   SUMMARY_ANALYSIS_DISPLAY,
-  SUMMARY_FILTERS,
   TIME_FILTERS,
 } from '../lib/summary';
 import {
@@ -251,48 +250,40 @@ export const filterDataAccordingtoFilterOptions = (
   );
 
   return data.filter((el) => {
-    let override = false;
     if (!dateFilterFunction(el, filterOptions)) {
       return false;
     }
-    for (let i = 0; i < filterOptionsKeys.length; i += 1) {
-      const index = filters.findIndex((ele) => ele.id === filterOptionsKeys[i]);
-      if (index !== -1) {
-        const filterItem = filters[index];
-        const { id, filter } = filterItem;
-        const selection = filterOptions[filterOptionsKeys[i]];
-        const value = el[id];
-        if (filter === SUMMARY_FILTERS.SELECTION_SINGLE) {
-          if (selection.value === ALL_OPTION.value) {
-            continue;
-          }
-          if (value !== selection.value) {
-            override = true;
-            break;
-          }
-        }
-        if (filter === SUMMARY_FILTERS.SELECTION_MULTIPLE) {
-          if (selection[0].value === ALL_OPTION.value) {
-            continue;
-          }
-          if (Array.isArray(selection)) {
-            let arrayOverride = true; // start off assuming it will be false
-            for (let j = 0; j < selection.length; j += 1) {
-              if (value === selection[j].value) {
-                arrayOverride = false;
-                break;
-              }
-            }
-            override = arrayOverride;
-            break;
-          }
-        }
+
+    return filterOptionsKeys.every((filterKey) => {
+      const filterItem = filters.find((f) => f.id === filterKey);
+      if (!filterItem) return true;
+
+      const { id } = filterItem;
+      const selection = filterOptions[filterKey];
+      const value = el[id];
+
+      // Check if the selection is ALL_OPTION
+      const isAllOption = Array.isArray(selection)
+        ? selection[0].value === ALL_OPTION.value
+        : selection.value === ALL_OPTION.value;
+
+      if (isAllOption) return true;
+
+      // Skip if value is undefined or null
+      if (value === undefined || value === null) return false;
+
+      if (typeof value === 'string') {
+        // For string values (like category)
+        return selection.some((s) => s.value === value);
       }
-    }
-    if (override) {
+      if (Array.isArray(value)) {
+        // For array values (like tags)
+        return selection.every((s) => value.includes(s.value));
+      }
+
+      // If value is neither a string nor an array, it can't match
       return false;
-    }
-    return true;
+    });
   });
 };
 

@@ -9,6 +9,7 @@ import {
   RT_APPLICATIONS,
   RT_HEALTH,
   RT_HOME,
+  RT_INVENTORY_MANAGEMENT,
   RT_TASKS,
   RT_WEALTH,
 } from './lib/routes';
@@ -17,6 +18,7 @@ import ApplicationsPage from './routes/applications-page';
 import WealthPage from './routes/wealth-page';
 import HealthPage from './routes/health-page';
 import TasksPage from './routes/tasks-page';
+import InventoryManagement from './routes/inventory-management';
 import './index.css';
 
 const container = document.getElementById('root');
@@ -34,6 +36,7 @@ const router = createBrowserRouter([
       { path: RT_HEALTH, element: <HealthPage /> },
       { path: RT_APPLICATIONS, element: <ApplicationsPage /> },
       { path: RT_TASKS, element: <TasksPage /> },
+      { path: RT_INVENTORY_MANAGEMENT, element: <InventoryManagement /> },
     ],
   },
 ]);

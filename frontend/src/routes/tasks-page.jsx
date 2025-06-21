@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  Header,
-  HelpPanel,
-  SegmentedControl,
-} from '@cloudscape-design/components';
+import { Header, SegmentedControl } from '@cloudscape-design/components';
 import { useQueries } from '@tanstack/react-query';
 import useMyStore from '../store/useStore';
 import Layout from '../components/layout';
@@ -14,7 +10,7 @@ import { fetchDailies, fetchHabits } from '../utils/tasks/api';
 
 const TASKS_PAGE_VIEWS = {
   HABITS: 'habits',
-  TODOS: 'todos',
+  // TODOS: 'todos',
   DAILIES: 'dailies',
 };
 
@@ -46,12 +42,8 @@ export default function TasksPage() {
 
   const [view, setView] = useState(TASKS_PAGE_VIEWS.HABITS);
 
-  function HelpContent() {
-    return <HelpPanel header={<h2>Overview</h2>} />;
-  }
-
   useEffect(() => {
-    setDataInStore('HelpContent', HelpContent);
+    setDataInStore('HelpContent', null);
 
     return () => {
       setDataInStore('HelpContent', null);
@@ -72,10 +64,10 @@ export default function TasksPage() {
               options={[
                 { text: 'Dailies', id: TASKS_PAGE_VIEWS.DAILIES },
                 { text: 'Habits', id: TASKS_PAGE_VIEWS.HABITS },
-                {
-                  text: 'Todos',
-                  id: TASKS_PAGE_VIEWS.TODOS,
-                },
+                // {
+                //   text: 'Todos',
+                //   id: TASKS_PAGE_VIEWS.TODOS,
+                // },
               ]}
             />
           }
@@ -86,7 +78,7 @@ export default function TasksPage() {
     >
       {view === TASKS_PAGE_VIEWS.DAILIES ? <Dailies /> : null}
       {view === TASKS_PAGE_VIEWS.HABITS ? <Habits /> : null}
-      {view === TASKS_PAGE_VIEWS.TODOS ? <Habits /> : null}
+      {/* {view === TASKS_PAGE_VIEWS.TODOS ? <Habits /> : null} */}
     </Layout>
   );
 }

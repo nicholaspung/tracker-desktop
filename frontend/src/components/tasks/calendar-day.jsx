@@ -16,7 +16,13 @@ import useMyStore from '../../store/useStore';
 import { updateDaily } from '../../utils/tasks/api';
 import { getCompletionPercentage } from '../../utils/tasks/daily';
 
-export default function CalendarDay({ day, colorClass, month, dailies }) {
+export default function CalendarDay({
+  day,
+  colorClass,
+  completion,
+  month,
+  dailies,
+}) {
   const { pb, replaceItemInStore } = useMyStore((state) => ({
     pb: state.pb,
     replaceItemInStore: state.replaceItemInStore,
@@ -44,8 +50,22 @@ export default function CalendarDay({ day, colorClass, month, dailies }) {
           }}
           className={`w-8 h-8 my-1 rounded-full ${colorClass} hover:opacity-80 transition-opacity bg-blue-500 ${
             hasDailies ? 'cursor-pointer' : ''
-          }`}
-        />
+          } flex items-center justify-center relative`}
+        >
+          {hasDailies ? (
+            <>
+              <span className="text-xs font-semibold text-white z-10">
+                {dailies.filter((el) => el.completed).length}/{dailies.length}
+              </span>
+              <div
+                className="absolute inset-0 bg-black bg-opacity-25 rounded-full"
+                style={{
+                  clipPath: `inset(${100 - completion}% 0 0 0 round 9999px)`,
+                }}
+              />
+            </>
+          ) : null}
+        </div>
       </SpaceBetween>
       {hasDailies ? (
         <Modal

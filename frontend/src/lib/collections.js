@@ -13,4 +13,9 @@ export const COLLECTION_NAMES = {
   HEALTH_FILES: 'health_files',
   HABITS: 'habits',
   DAILIES: 'dailies',
+  INVENTORY_ENTRY: 'inventory_entry',
+  INVENTORY_ITEM: 'inventory_item',
+  INVENTORY_CATEGORY: 'inventory_category',
+  INVENTORY_UNIT: 'inventory_unit',
+  INVENTORY_LOCATION: 'inventory_location',
 };

@@ -2,7 +2,6 @@
 
 - add line chart to showcase finance balance trends
 - test if import health logs work
-- fix summary filtering of multiple selections (ex. finance logs, if I want to filter and see only logs with misc as categories, and if a log includes amazon, show me only those logs )
 
 LATER
 
@@ -10,9 +9,19 @@ LATER
 - find out if you can disable scroll in background if modal is open
 - if a required value isn't provided, make it error
 - add a clear all notifications notification like previous app 
+- what do I want to track?
+    - recipes
+    - food
+    - create grocery list
+    - inventory management system
+    - time tracking
+    - restaurants and meals chosen
+    - people crm
+    - random tracking
 
 DONE
 
+- fix summary filtering of multiple selections (ex. finance logs, if I want to filter and see only logs with misc as categories, and if a log includes amazon, show me only those logs ) [DONE 10/13/24]
 - fix the adding of dates to be at the time of adding, rather than UTC 0 of date [DONE 8/5/24]
 - add ability to add multiple items [DONE 8/14/24]
 - add ability to upload csv with items [DONE 8/14/24]
