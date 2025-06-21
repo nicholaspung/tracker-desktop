@@ -7,6 +7,7 @@ import '@cloudscape-design/global-styles/index.css';
 import ErrorPage from './routes/error-page';
 import {
   RT_APPLICATIONS,
+  RT_EXPORT,
   RT_HEALTH,
   RT_HOME,
   RT_INVENTORY_MANAGEMENT,
@@ -19,6 +20,7 @@ import WealthPage from './routes/wealth-page';
 import HealthPage from './routes/health-page';
 import TasksPage from './routes/tasks-page';
 import InventoryManagement from './routes/inventory-management';
+import ExportPage from './routes/export-page';
 import './index.css';
 
 const container = document.getElementById('root');
@@ -37,6 +39,7 @@ const router = createBrowserRouter([
       { path: RT_APPLICATIONS, element: <ApplicationsPage /> },
       { path: RT_TASKS, element: <TasksPage /> },
       { path: RT_INVENTORY_MANAGEMENT, element: <InventoryManagement /> },
+      { path: RT_EXPORT, element: <ExportPage /> },
     ],
   },
 ]);

@@ -2,6 +2,7 @@ import { SideNavigation } from '@cloudscape-design/components';
 import { useNavigate } from 'react-router-dom';
 import {
   RT_APPLICATIONS,
+  RT_EXPORT,
   RT_HEALTH,
   RT_INVENTORY_MANAGEMENT,
   RT_TASKS,
@@ -27,6 +28,7 @@ export default function SideNav({ activeHref, setActiveHref }) {
           text: 'Inventory management',
           href: RT_INVENTORY_MANAGEMENT,
         },
+        { type: 'link', text: 'Export Data', href: RT_EXPORT },
       ]}
       onFollow={(e) => {
         e.preventDefault();
