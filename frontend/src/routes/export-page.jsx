@@ -9,14 +9,23 @@ import {
   Box,
   ProgressBar,
 } from '@cloudscape-design/components';
-import Papa from 'papaparse';
 import { COLLECTION_NAMES } from '../lib/collections';
-import { POCKETBASE_URL } from '../lib/api';
+import { 
+  exportCollectionToCSV, 
+  hasFieldConfig, 
+  getFieldConfig 
+} from '../utils/fieldAwareExport';
 
-const COLLECTION_OPTIONS = Object.entries(COLLECTION_NAMES).map(([key, value]) => ({
-  label: key.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' '),
-  value,
-}));
+const COLLECTION_OPTIONS = Object.entries(COLLECTION_NAMES).map(([key, value]) => {
+  const label = key.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ');
+  const hasConfig = hasFieldConfig(value);
+  
+  return {
+    label: hasConfig ? `${label} ✓` : `${label} (basic)`,
+    value,
+    description: hasConfig ? 'Uses field configuration for enhanced export' : 'Basic raw data export',
+  };
+});
 
 export default function ExportPage() {
   const [selectedCollections, setSelectedCollections] = useState([]);
@@ -25,32 +34,6 @@ export default function ExportPage() {
   const [exportStatus, setExportStatus] = useState('');
   const [alert, setAlert] = useState(null);
 
-  const fetchCollectionData = async (collectionName) => {
-    try {
-      const response = await fetch(`${POCKETBASE_URL}/api/collections/${collectionName}/records`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${collectionName}: ${response.statusText}`);
-      }
-      const data = await response.json();
-      return data.items || [];
-    } catch (error) {
-      console.error(`Error fetching ${collectionName}:`, error);
-      throw error;
-    }
-  };
-
-  const exportToCSV = (data, filename) => {
-    const csv = Papa.unparse(data);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', filename);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   const handleExport = async () => {
     if (selectedCollections.length === 0) {
@@ -70,14 +53,8 @@ export default function ExportPage() {
         const collection = selectedCollections[i];
         setExportStatus(`Exporting ${collection.label}...`);
         
-        const data = await fetchCollectionData(collection.value);
-        
-        if (data.length === 0) {
-          console.warn(`Collection ${collection.value} is empty`);
-        }
-        
         const filename = `${collection.value}_export_${new Date().toISOString().split('T')[0]}.csv`;
-        exportToCSV(data, filename);
+        await exportCollectionToCSV(collection.value, filename);
         
         setExportProgress(((i + 1) / selectedCollections.length) * 100);
       }
@@ -182,6 +159,12 @@ export default function ExportPage() {
             <div>• Each collection will be exported as a separate CSV file</div>
             <div>• Files will be downloaded to your default downloads folder</div>
             <div>• File names include the collection name and current date</div>
+            <div>• Collections marked with ✓ use field configurations for enhanced formatting:</div>
+            <div>&nbsp;&nbsp;- Dates formatted as readable text</div>
+            <div>&nbsp;&nbsp;- Currency values formatted with $ symbol</div>
+            <div>&nbsp;&nbsp;- Related data expanded to show names instead of IDs</div>
+            <div>&nbsp;&nbsp;- Human-readable column headers</div>
+            <div>• Collections marked "(basic)" export raw database values</div>
             <div>• Empty collections will still generate CSV files (with headers only)</div>
           </SpaceBetween>
         </Alert>
