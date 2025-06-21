@@ -3,6 +3,7 @@ import JSZip from 'jszip';
 import { transformer } from './data';
 import { POCKETBASE_URL } from '../lib/api';
 import { TABLE_DISPLAY_TYPES } from '../lib/display';
+import { fetchPbRecordList } from './api';
 
 // Import all field configurations
 import { CONFIG_APPLICATIONS } from '../lib/config/applications';
@@ -58,39 +59,32 @@ const COLLECTION_CONFIG_MAP = {
 
 /**
  * Fetch collection data with proper field expansion for related data
+ * Uses PocketBase getFullList() to fetch ALL records efficiently
  */
-export const fetchFieldAwareCollectionData = async (collectionName) => {
+export const fetchFieldAwareCollectionData = async (pb, collectionName) => {
   try {
     const config = COLLECTION_CONFIG_MAP[collectionName];
     
-    if (!config) {
-      // Fallback to basic fetch if no config found
-      const response = await fetch(`${POCKETBASE_URL}/api/collections/${collectionName}/records`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${collectionName}: ${response.statusText}`);
-      }
-      const data = await response.json();
-      return data.items || [];
-    }
-
     // Build expand fields from config
-    const expandFields = config.columns
+    const expandFields = config?.columns
       ?.filter(col => col.expandFields)
       ?.map(col => col.expandFields);
 
-    // Construct API URL with expand parameters
-    const url = new URL(`${POCKETBASE_URL}/api/collections/${collectionName}/records`);
-    if (expandFields && expandFields.length > 0) {
-      url.searchParams.set('expand', expandFields.join(','));
+    // Use the existing API utility that handles getFullList
+    const records = await fetchPbRecordList(pb, {
+      collectionName,
+      expandFields,
+      sort: config?.sort
+    });
+
+    // Handle error case
+    if (records?.name === 'ClientResponseError 0' || records instanceof Error) {
+      throw records;
     }
 
-    const response = await fetch(url.toString());
-    if (!response.ok) {
-      throw new Error(`Failed to fetch ${collectionName}: ${response.statusText}`);
-    }
+    console.log(`Fetched ${records.length} records from ${collectionName}`);
+    return records;
     
-    const data = await response.json();
-    return data.items || [];
   } catch (error) {
     console.error(`Error fetching ${collectionName}:`, error);
     throw error;
@@ -206,10 +200,10 @@ export const formatDataForCSV = (transformedData, config) => {
 /**
  * Export collection data to CSV with field configuration support
  */
-export const exportCollectionToCSV = async (collectionName, filename) => {
+export const exportCollectionToCSV = async (pb, collectionName, filename) => {
   try {
     // Fetch data with proper field expansion
-    const rawData = await fetchFieldAwareCollectionData(collectionName);
+    const rawData = await fetchFieldAwareCollectionData(pb, collectionName);
     
     if (rawData.length === 0) {
       console.warn(`Collection ${collectionName} is empty`);
@@ -337,10 +331,10 @@ const extractFileInfo = (record, fileFields) => {
 /**
  * Create and download a zip file containing CSV and all files
  */
-export const exportCollectionToZip = async (collectionName, filename) => {
+export const exportCollectionToZip = async (pb, collectionName, filename) => {
   try {
     // Fetch data with proper field expansion
-    const rawData = await fetchFieldAwareCollectionData(collectionName);
+    const rawData = await fetchFieldAwareCollectionData(pb, collectionName);
     const config = COLLECTION_CONFIG_MAP[collectionName];
     const fileFields = getFileFields(collectionName);
     

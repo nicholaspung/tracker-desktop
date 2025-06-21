@@ -18,6 +18,7 @@ import {
   hasFileFields,
   getFieldConfig 
 } from '../utils/fieldAwareExport';
+import useMyStore from '../store/useStore';
 
 const COLLECTION_OPTIONS = Object.entries(COLLECTION_NAMES).map(([key, value]) => {
   const label = key.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ');
@@ -46,6 +47,7 @@ const COLLECTION_OPTIONS = Object.entries(COLLECTION_NAMES).map(([key, value]) =
 });
 
 export default function ExportPage() {
+  const pb = useMyStore((state) => state.pb);
   const [selectedCollections, setSelectedCollections] = useState([]);
   const [isExporting, setIsExporting] = useState(false);
   const [exportProgress, setExportProgress] = useState(0);
@@ -81,13 +83,13 @@ export default function ExportPage() {
         const baseFilename = `${collection.value}_export_${new Date().toISOString().split('T')[0]}`;
         
         if (shouldUseZip && collection.hasFiles) {
-          const result = await exportCollectionToZip(collection.value, `${baseFilename}.csv`);
+          const result = await exportCollectionToZip(pb, collection.value, `${baseFilename}.csv`);
           if (result.success) {
             successfulExports++;
             zipExports++;
           }
         } else {
-          await exportCollectionToCSV(collection.value, `${baseFilename}.csv`);
+          await exportCollectionToCSV(pb, collection.value, `${baseFilename}.csv`);
           successfulExports++;
         }
         
